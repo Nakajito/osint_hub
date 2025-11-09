@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Inicio - OSINT Hub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="row py-5 text-center">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="display-4 fw-bold text-primary">
+                <i class="bi bi-search"></i> OSINT Hub
+            </h1>
+            <p class="lead text-muted mb-4">
+                Plataforma integrada de herramientas de inteligencia de fuentes abiertas
+            </p>
+            <p class="mb-4">
+                Centraliza tus investigaciones OSINT en una sola plataforma. 
+                Accede a múltiples herramientas de manera eficiente y organizada.
+            </p>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a href="#herramientas" class="btn btn-primary btn-lg px-4 gap-3">
+                    <i class="bi bi-tools"></i> Explorar Herramientas
+                </a>
+                <a href="#about" class="btn btn-outline-secondary btn-lg px-4">
+                    <i class="bi bi-info-circle"></i> Más Información
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Herramientas Disponibles -->
+    <div class="row py-5" id="herramientas">
+        <div class="col-12 text-center mb-4">
+            <h2 class="fw-bold">
+                <i class="bi bi-tools"></i> Herramientas Disponibles
+            </h2>
+            <p class="text-muted">Selecciona una herramienta para comenzar tu investigación</p>
+        </div>
+
+        <!-- Tarjeta: Email Search (Holehe) -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm hover-card">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-envelope-at display-3 text-primary"></i>
+                    </div>
+                    <h5 class="card-title fw-bold">Email Search</h5>
+                    <p class="card-text text-muted">
+                        Verifica la presencia de un correo electrónico en múltiples plataformas 
+                        y servicios usando Holehe.
+                    </p>
+                    <div class="d-grid">
+                        <a href="{% url 'email_holehe:search' %}" class="btn btn-primary">
+                            <i class="bi bi-search"></i> Buscar Email
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <small class="text-muted">
+                        <i class="bi bi-check-circle-fill text-success"></i> Disponible
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta: Username Search (Próximamente) -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-person-badge display-3 text-secondary"></i>
+                    </div>
+                    <h5 class="card-title fw-bold">Username Search</h5>
+                    <p class="card-text text-muted">
+                        Busca nombres de usuario a través de diferentes redes sociales 
+                        y plataformas online.
+                    </p>
+                    <div class="d-grid">
+                        <button class="btn btn-secondary" disabled>
+                            <i class="bi bi-hourglass-split"></i> Próximamente
+                        </button>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <small class="text-muted">
+                        <i class="bi bi-clock-fill"></i> En desarrollo
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta: Phone Number Search (Próximamente) -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-telephone display-3 text-secondary"></i>
+                    </div>
+                    <h5 class="card-title fw-bold">Phone Search</h5>
+                    <p class="card-text text-muted">
+                        Obtén información sobre números telefónicos incluyendo 
+                        ubicación y operador.
+                    </p>
+                    <div class="d-grid">
+                        <button class="btn btn-secondary" disabled>
+                            <i class="bi bi-hourglass-split"></i> Próximamente
+                        </button>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <small class="text-muted">
+                        <i class="bi bi-clock-fill"></i> En desarrollo
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección: Acerca de -->
+    <div class="row py-5 about-section rounded" id="about">
+        <div class="col-12 text-center mb-4">
+            <h2 class="fw-bold">
+                <i class="bi bi-info-circle"></i> Acerca de OSINT Hub
+            </h2>
+        </div>
+        <div class="col-lg-6 mb-3">
+            <h5 class="fw-bold">
+                <i class="bi bi-shield-check text-success"></i> ¿Qué es OSINT?
+            </h5>
+            <p class="text-muted">
+                OSINT (Open Source Intelligence) es la recopilación y análisis de información 
+                de fuentes públicamente disponibles. Se utiliza en investigaciones, seguridad 
+                cibernética y análisis de inteligencia.
+            </p>
+        </div>
+        <div class="col-lg-6 mb-3">
+            <h5 class="fw-bold">
+                <i class="bi bi-lightbulb text-warning"></i> ¿Por qué OSINT Hub?
+            </h5>
+            <p class="text-muted">
+                OSINT Hub centraliza múltiples herramientas OSINT en una sola plataforma, 
+                facilitando la investigación y ahorrando tiempo al no tener que usar 
+                múltiples servicios por separado.
+            </p>
+        </div>
+        <div class="col-12 mt-3">
+            <div class="alert alert-warning" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i> 
+                <strong>Disclaimer:</strong> Esta herramienta está diseñada únicamente para 
+                fines educativos y de investigación legal. El uso debe cumplir con todas las 
+                leyes y regulaciones aplicables.
+            </div>
+        </div>
+    </div>
+
+    <!-- Características -->
+    <div class="row py-5">
+        <div class="col-12 text-center mb-4">
+            <h2 class="fw-bold">
+                <i class="bi bi-star-fill text-warning"></i> Características
+            </h2>
+        </div>
+        <div class="col-md-4 text-center mb-4">
+            <div class="feature-icon mb-3">
+                <i class="bi bi-speedometer2 display-4 text-primary"></i>
+            </div>
+            <h5 class="fw-bold">Rápido y Eficiente</h5>
+            <p class="text-muted">
+                Resultados en segundos gracias a nuestra infraestructura optimizada.
+            </p>
+        </div>
+        <div class="col-md-4 text-center mb-4">
+            <div class="feature-icon mb-3">
+                <i class="bi bi-shield-lock display-4 text-success"></i>
+            </div>
+            <h5 class="fw-bold">Seguro y Privado</h5>
+            <p class="text-muted">
+                Tus búsquedas son privadas y no se comparten con terceros.
+            </p>
+        </div>
+        <div class="col-md-4 text-center mb-4">
+            <div class="feature-icon mb-3">
+                <i class="bi bi-graph-up display-4 text-info"></i>
+            </div>
+            <h5 class="fw-bold">Múltiples Fuentes</h5>
+            <p class="text-muted">
+                Accede a información de cientos de plataformas diferentes.
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+.hover-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Sección Acerca de - Tema Claro */
+.about-section {
+    background-color: #f8f9fa;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Sección Acerca de - Tema Oscuro */
+[data-bs-theme="dark"] .about-section {
+    background: linear-gradient(145deg, #0f1a2a 0%, #162332 100%);
+    border: 1px solid rgba(255, 101, 0, 0.15);
+}
+
+[data-bs-theme="dark"] .about-section h2,
+[data-bs-theme="dark"] .about-section h5 {
+    color: var(--primary-orange);
+}
+
+[data-bs-theme="dark"] .about-section .text-muted {
+    color: #b0b0b0 !important;
+}
+</style>
+{% endblock %}

@@ -133,6 +133,8 @@ celerybeat.pid
 
 # Environments
 .env
+.env.local
+.env.production
 .venv/
 env/
 venv/
@@ -382,5 +384,18 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# ========================================
+# OSINT Hub - Configuración específica
+# ========================================
+
+# Archivos estáticos recolectados (generados por collectstatic)
+staticfiles/
+
+# Base de datos de producción
+*.db
+
+# Archivos de sesión
+sessions/
 
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode,linux,django,windows,macos,venv,git

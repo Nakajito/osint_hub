@@ -2,14 +2,16 @@ services:
   # Web Service (Django)
   - type: web
     name: osint-hub
-    runtime: python
+    env: python
+    region: oregon
+    plan: free
     buildCommand: "./build.sh"
-    startCommand: "gunicorn osint_hub.wsgi:application"
+    startCommand: "gunicorn osint_hub.wsgi:application --bind 0.0.0.0:$PORT"
     envVars:
       - key: PYTHON_VERSION
-        value: 3.12.3
+        value: "3.12.3"
       - key: DEBUG
-        value: False
+        value: "False"
       - key: SECRET_KEY
         generateValue: true
       - key: DATABASE_URL
@@ -18,11 +20,9 @@ services:
           property: connectionString
       - key: ALLOWED_HOSTS
         sync: false
-    autoDeploy: true
-    healthCheckPath: /
 
   # Database (PostgreSQL)
-  - type: pgsql
+  - type: postgres
     name: osint-hub-db
     databaseName: osint_hub
     user: osint_hub_user

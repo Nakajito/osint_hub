@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}404 - Página No Encontrada - OSINT Hub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row min-vh-100 align-items-center justify-content-center">
+        <div class="col-lg-8 text-center">
+            <!-- Error 404 -->
+            <div class="error-404">
+                <h1 class="display-1 fw-bold text-orange">404</h1>
+                <div class="error-icon mb-4">
+                    <i class="bi bi-exclamation-triangle display-1 text-warning"></i>
+                </div>
+                <h2 class="mb-4">¡Oops! Página No Encontrada</h2>
+                <p class="lead text-muted mb-4">
+                    Lo sentimos, la página que estás buscando no existe o ha sido movida.
+                </p>
+                
+                <!-- Sugerencias -->
+                <div class="row mt-5 mb-5">
+                    <div class="col-md-4 mb-3">
+                        <div class="suggestion-card p-3 rounded">
+                            <i class="bi bi-house-door display-6 text-primary mb-2"></i>
+                            <h6 class="fw-bold">Ir al Inicio</h6>
+                            <p class="small text-muted">Vuelve a la página principal</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="suggestion-card p-3 rounded">
+                            <i class="bi bi-search display-6 text-success mb-2"></i>
+                            <h6 class="fw-bold">Buscar Email</h6>
+                            <p class="small text-muted">Usa nuestra herramienta OSINT</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="suggestion-card p-3 rounded">
+                            <i class="bi bi-arrow-left display-6 text-info mb-2"></i>
+                            <h6 class="fw-bold">Volver Atrás</h6>
+                            <p class="small text-muted">Regresa a la página anterior</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones de Acción -->
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                    <a href="{% url 'home' %}" class="btn btn-primary btn-lg px-4">
+                        <i class="bi bi-house-door"></i> Ir al Inicio
+                    </a>
+                    <a href="{% url 'email_holehe:search' %}" class="btn btn-outline-secondary btn-lg px-4">
+                        <i class="bi bi-envelope-at"></i> Buscar Email
+                    </a>
+                    <button onclick="history.back()" class="btn btn-outline-secondary btn-lg px-4">
+                        <i class="bi bi-arrow-left"></i> Volver
+                    </button>
+                </div>
+
+                <!-- Información Adicional -->
+                <div class="alert alert-info mt-5" role="alert">
+                    <i class="bi bi-info-circle"></i> 
+                    Si crees que esto es un error, por favor 
+                    <a href="https://github.com/Nakajito/osint_hub/issues" target="_blank" class="alert-link">
+                        repórtalo en GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Estilos para página 404 */
+.error-404 {
+    animation: fadeInUp 0.6s ease-in-out;
+}
+
+.error-404 h1 {
+    font-size: 10rem;
+    line-height: 1;
+    text-shadow: 0 4px 8px rgba(255, 101, 0, 0.3);
+}
+
+.error-icon {
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.suggestion-card {
+    background-color: var(--bg-light);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.suggestion-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-orange);
+}
+
+[data-bs-theme="dark"] .suggestion-card {
+    background: linear-gradient(145deg, #1a2332 0%, #0f1a2a 100%);
+    border-color: rgba(255, 101, 0, 0.1);
+}
+
+[data-bs-theme="dark"] .suggestion-card:hover {
+    border-color: var(--primary-orange);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .error-404 h1 {
+        font-size: 6rem;
+    }
+}
+</style>
+{% endblock %}

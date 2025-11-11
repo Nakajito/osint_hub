@@ -11,9 +11,11 @@ SECRET_KEY = config(
     default="django-insecure-4gnf%1w^*a8a10-9f&l3s+fd0f0^88segf3o47&)bn=v6x2sd(",
 )
 DEBUG = config("DEBUG", default=True, cast=bool)
+
+# ALLOWED_HOSTS - Compatible con PythonAnywhere y Render
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS",
-    default="localhost,127.0.0.1",
+    default="localhost,127.0.0.1,.pythonanywhere.com,.onrender.com",
     cast=lambda v: [s.strip() for s in v.split(",")],
 )
 
@@ -132,9 +134,9 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
 
-# CSRF Trusted Origins (para Render.com)
+# CSRF Trusted Origins (para Render.com y PythonAnywhere)
 CSRF_TRUSTED_ORIGINS = config(
     "CSRF_TRUSTED_ORIGINS",
-    default="",
+    default="https://*.pythonanywhere.com,https://*.onrender.com",
     cast=lambda v: [s.strip() for s in v.split(",")] if v else [],
 )

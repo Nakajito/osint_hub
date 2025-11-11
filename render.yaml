@@ -1,12 +1,11 @@
 services:
-  # Web Service (Django)
   - type: web
     name: osint-hub
     env: python
-    region: oregon
     plan: free
+    region: oregon
     buildCommand: "./build.sh"
-    startCommand: "gunicorn osint_hub.wsgi:application --bind 0.0.0.0:$PORT"
+    startCommand: "gunicorn osint_hub.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 60"
     envVars:
       - key: PYTHON_VERSION
         value: "3.12.3"
@@ -19,11 +18,14 @@ services:
           name: osint-hub-db
           property: connectionString
       - key: ALLOWED_HOSTS
-        sync: false
+        value: "osint-hub-qhow.onrender.com,localhost,127.0.0.1"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://osint-hub-qhow.onrender.com"
+    autoDeploy: true
+    healthCheckPath: /
 
-  # Database (PostgreSQL)
-  - type: postgres
-    name: osint-hub-db
+databases:
+  - name: osint-hub-db
     databaseName: osint_hub
     user: osint_hub_user
     plan: free

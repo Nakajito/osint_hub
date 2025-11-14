@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_bootstrap5",
     "email_holehe",
+    "ExifTool",
 ]
 
 MIDDLEWARE = [

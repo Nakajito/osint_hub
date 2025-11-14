@@ -8,6 +8,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", TemplateView.as_view(template_name="home.html"), name="home"),
     path("email/", include("email_holehe.urls")),
+    path("exiftool/", include("ExifTool.urls")),
 ]
 
 # Handlers de errores personalizados

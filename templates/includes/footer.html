@@ -1,0 +1,20 @@
+<footer class="bg-dark text-light py-4 mt-5">
+	<div class="container text-center small">
+		<div class="row">
+			<div class="col-md-6 mb-2 mb-md-0">
+				<a class="text-decoration-none text-light" href="{% url 'home' %}">OSINT Hub</a> &middot; Herramientas OSINT
+			</div>
+			<div class="col-md-6">
+				<a class="text-light me-2" href="{% url 'email_holehe:search' %}">Buscar email</a>
+				<a class="text-light me-2" href="{% url 'exiftool:upload' %}">Metadata</a>
+				<a class="text-light" href="https://github.com/Nakajito/osint_hub" target="_blank" rel="noopener">GitHub</a>
+			</div>
+		</div>
+		<div class="row mt-2">
+			<div class="col-12">
+				<small class="text-muted">© Nakajito - {{ now|date:"Y" }}</small>
+			</div>
+		</div>
+	</div>
+</footer>
+

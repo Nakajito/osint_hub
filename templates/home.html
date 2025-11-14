@@ -64,6 +64,31 @@
             </div>
         </div>
 
+        <!-- Tarjeta: Metadata (ExifTool) -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm hover-card">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-file-earmark-text display-3 text-primary"></i>
+                    </div>
+                    <h5 class="card-title fw-bold">Metadata</h5>
+                    <p class="card-text text-muted">
+                        Extrae metadatos (EXIF, XMP, IPTC) de imágenes y documentos usando ExifTool.
+                    </p>
+                    <div class="d-grid">
+                        <a href="{% url 'exiftool:upload' %}" class="btn btn-primary">
+                            <i class="bi bi-upload"></i> Subir archivo
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <small class="text-muted">
+                        <i class="bi bi-check-circle-fill text-success"></i> Disponible
+                    </small>
+                </div>
+            </div>
+        </div>
+
         <!-- Tarjeta: Username Search (Próximamente) -->
         <div class="col-md-6 col-lg-4 mb-4">
             <div class="card h-100 shadow-sm">

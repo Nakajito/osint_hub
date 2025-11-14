@@ -48,14 +48,28 @@ def upload_file(request):
             for chunk in uploaded.chunks():
                 f.write(chunk)
 
-        # Intentar usar pyexiftool primero
-        metadata = None
+        # Intentar usar piexif para JPEG/EXIF (Python); si falla, fallback a exiftool subprocess
+        metadata = {}
         try:
-            import exiftool
+            import piexif
 
-            with exiftool.ExifTool() as et:
-                meta = et.get_metadata(tmp_path)
-                metadata = meta or {}
+            exif_dict = piexif.load(tmp_path)
+            # Convert piexif structure to a flat readable dict
+            for ifd_name, ifd in exif_dict.items():
+                if ifd is None:
+                    continue
+                for tag, val in ifd.items():
+                    tag_info = piexif.TAGS.get(ifd_name, {}).get(tag, {})
+                    tag_name = tag_info.get("name", str(tag))
+                    # Decode bytes
+                    if isinstance(val, bytes):
+                        try:
+                            v = val.decode("utf-8", errors="ignore")
+                        except Exception:
+                            v = str(val)
+                    else:
+                        v = val
+                    metadata[tag_name] = v
         except Exception:
             # Fallback a subprocess exiftool si está disponible en el sistema
             try:
@@ -102,6 +116,40 @@ def upload_file(request):
 
             if not dms_str:
                 return None
+
+            # Handle piexif-style rational tuples: ((deg_num,deg_den),(min_num,min_den),(sec_num,sec_den))
+            try:
+                if isinstance(dms_str, (list, tuple)):
+                    parts = list(dms_str)
+                    # If nested rationals
+                    if parts and isinstance(parts[0], (list, tuple)):
+
+                        def rat_to_float(r):
+                            try:
+                                return float(r[0]) / float(r[1])
+                            except Exception:
+                                try:
+                                    return float(r[0])
+                                except Exception:
+                                    return None
+
+                        deg = rat_to_float(parts[0])
+                        minutes = rat_to_float(parts[1]) if len(parts) > 1 else 0
+                        seconds = rat_to_float(parts[2]) if len(parts) > 2 else 0
+                        if deg is None:
+                            return None
+                        minutes = minutes or 0
+                        seconds = seconds or 0
+                        return deg + minutes / 60.0 + seconds / 3600.0
+
+                    # If simple numeric tuple
+                    try:
+                        return float(parts[0])
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+
             s = str(dms_str).strip()
             # Try to extract decimal directly
             try:
@@ -167,8 +215,38 @@ def upload_file(request):
                     "Exif_GPSLongitude"
                 )
                 if g_lat and g_lon:
+                    # Also check for latitude/longitude references (N/S, E/W)
+                    lat_ref = metadata.get("GPSLatitudeRef") or metadata.get(
+                        "Exif_GPSLatitudeRef"
+                    )
+                    lon_ref = metadata.get("GPSLongitudeRef") or metadata.get(
+                        "Exif_GPSLongitudeRef"
+                    )
+
                     lat_dec = dms_to_decimal(g_lat)
                     lon_dec = dms_to_decimal(g_lon)
+
+                    # Apply sign from refs if available
+                    try:
+                        if lat_dec is not None and lat_ref:
+                            lr = (
+                                lat_ref.decode("utf-8")
+                                if isinstance(lat_ref, (bytes, bytearray))
+                                else str(lat_ref)
+                            )
+                            if lr.upper().startswith("S"):
+                                lat_dec = -abs(lat_dec)
+                        if lon_dec is not None and lon_ref:
+                            rr = (
+                                lon_ref.decode("utf-8")
+                                if isinstance(lon_ref, (bytes, bytearray))
+                                else str(lon_ref)
+                            )
+                            if rr.upper().startswith("W"):
+                                lon_dec = -abs(lon_dec)
+                    except Exception:
+                        pass
+
                     if lat_dec is not None and lon_dec is not None:
                         drone_coords = (lat_dec, lon_dec)
                         map_url_drone = f"https://www.openstreetmap.org/?mlat={lat_dec}&mlon={lon_dec}#map=18/{lat_dec}/{lon_dec}"
@@ -176,13 +254,20 @@ def upload_file(request):
                 # Altitude
                 g_alt = metadata.get("GPSAltitude") or metadata.get("Exif_GPSAltitude")
                 if g_alt:
-                    # Extract numeric portion
+                    # GPSAltitude can be a rational tuple or a string; handle common cases
                     try:
-                        import re
+                        # If piexif rational
+                        if isinstance(g_alt, (list, tuple)):
+                            # e.g., (2967, 10) -> 296.7
+                            num = g_alt[0]
+                            den = g_alt[1] if len(g_alt) > 1 else 1
+                            drone_alt = float(num) / float(den) if den else None
+                        else:
+                            import re
 
-                        parts = re.findall(r"[-+]?[0-9]*\.?[0-9]+", str(g_alt))
-                        if parts:
-                            drone_alt = float(parts[0])
+                            parts = re.findall(r"[-+]?[0-9]*\.?[0-9]+", str(g_alt))
+                            if parts:
+                                drone_alt = float(parts[0])
                     except Exception:
                         drone_alt = None
         except Exception:

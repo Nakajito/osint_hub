@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Resultados - Búsqueda de Teléfono{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-12">
+      <a href="{% url 'phonesearch:search' %}" class="btn btn-outline-secondary mb-3">
+        <i class="bi bi-arrow-left"></i> Nueva búsqueda
+      </a>
+
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h3 class="card-title">Resultados de búsqueda</h3>
+          <p class="text-muted">Teléfono: <strong>+{{ country }} {{ phone }}</strong></p>
+
+          {% if rate_limited %}
+          <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle-fill"></i> 
+            <strong>Rate Limit:</strong> Has sido limitado por una o más plataformas. Intenta nuevamente en unos minutos.
+          </div>
+          {% endif %}
+
+          {% if results %}
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <div class="card bg-light">
+                <div class="card-body text-center">
+                  <h5 class="card-title">Encontrado en</h5>
+                  <h2 class="text-success">{{ found_count }}</h2>
+                  <small class="text-muted">de {{ results|length }} plataformas</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card bg-light">
+                <div class="card-body text-center">
+                  <h5 class="card-title">Total de plataformas</h5>
+                  <h2>{{ results|length }}</h2>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-sm table-striped">
+              <thead class="table-dark sticky-top">
+                <tr>
+                  <th>Plataforma</th>
+                  <th>Dominio</th>
+                  <th>Método</th>
+                  <th>Existe</th>
+                  <th>Rate Limit</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for result in results %}
+                <tr class="{% if result.exists %}table-success{% else %}table-light{% endif %}">
+                  <td class="fw-bold">{{ result.name|title }}</td>
+                  <td><a href="https://{{ result.domain }}" target="_blank" rel="noopener">{{ result.domain }}</a></td>
+                  <td><small class="badge bg-info">{{ result.method|default:"unknown" }}</small></td>
+                  <td>
+                    {% if result.exists %}
+                    <span class="badge bg-success">Sí</span>
+                    {% else %}
+                    <span class="badge bg-secondary">No</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if result.rateLimit %}
+                    <span class="badge bg-warning">Limitado</span>
+                    {% else %}
+                    <span class="badge bg-light text-dark">No</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          {% if found_count > 0 %}
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> 
+            Se encontró el número en <strong>{{ found_count }}</strong> plataforma(s). Puedes hacer clic en los dominios para visitar los sitios.
+          </div>
+          {% else %}
+          <div class="alert alert-success">
+            <i class="bi bi-check-circle"></i> 
+            El número no fue encontrado en las plataformas buscadas.
+          </div>
+          {% endif %}
+
+          {% else %}
+          <div class="alert alert-warning">No se encontraron resultados o hubo un error durante la búsqueda.</div>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

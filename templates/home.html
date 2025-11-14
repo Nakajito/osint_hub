@@ -115,27 +115,27 @@
             </div>
         </div>
 
-        <!-- Tarjeta: Phone Number Search (Próximamente) -->
+        <!-- Tarjeta: Phone Number Search -->
         <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card h-100 shadow-sm">
+            <div class="card h-100 shadow-sm hover-card">
                 <div class="card-body text-center">
                     <div class="mb-3">
-                        <i class="bi bi-telephone display-3 text-secondary"></i>
+                        <i class="bi bi-telephone display-3 text-primary"></i>
                     </div>
                     <h5 class="card-title fw-bold">Phone Search</h5>
                     <p class="card-text text-muted">
-                        Obtén información sobre números telefónicos incluyendo 
-                        ubicación y operador.
+                        Verifica si un número de teléfono está registrado en plataformas como 
+                        Instagram, Snapchat, Amazon usando Ignorant.
                     </p>
                     <div class="d-grid">
-                        <button class="btn btn-secondary" disabled>
-                            <i class="bi bi-hourglass-split"></i> Próximamente
-                        </button>
+                        <a href="{% url 'phonesearch:search' %}" class="btn btn-primary">
+                            <i class="bi bi-search"></i> Buscar teléfono
+                        </a>
                     </div>
                 </div>
                 <div class="card-footer bg-transparent border-top-0">
                     <small class="text-muted">
-                        <i class="bi bi-clock-fill"></i> En desarrollo
+                        <i class="bi bi-check-circle-fill text-success"></i> Disponible
                     </small>
                 </div>
             </div>

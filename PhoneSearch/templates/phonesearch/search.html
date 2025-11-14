@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Búsqueda de Teléfono - OSINT Hub{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h3 class="card-title">Búsqueda de Número Telefónico</h3>
+          <p class="text-muted">Verifica si un número de teléfono está registrado en plataformas como Instagram, Snapchat, Amazon y más usando Ignorant.</p>
+
+          <form method="post" id="search-form">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+              <label for="{{ form.query.id_for_label }}" class="form-label">{{ form.query.label }}</label>
+              {{ form.query }}
+            </div>
+
+            <div class="card bg-light mb-3">
+              <div class="card-body">
+                <h6 class="card-title">Ejemplos de formato</h6>
+                <small class="text-muted d-block">
+                  <strong>México:</strong> ignorant 521 5535664668<br>
+                  <strong>España:</strong> ignorant 34 644637111<br>
+                  <strong>Colombia:</strong> ignorant 57 3101234567<br>
+                  <strong>Argentina:</strong> ignorant 54 1123456789
+                </small>
+              </div>
+            </div>
+
+            <div class="alert alert-info">
+              <i class="bi bi-info-circle"></i> 
+              <strong>Privacidad:</strong> Esta búsqueda no notifica al propietario del número. Los datos son procesados en el servidor y no se guardan.
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+              <a href="{% url 'home' %}" class="btn btn-outline-secondary">Volver</a>
+              <button type="submit" class="btn btn-primary" id="search-btn">
+                <i class="bi bi-search"></i> Buscar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('search-form').addEventListener('submit', function() {
+  const btn = document.getElementById('search-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Buscando...';
+});
+</script>
+{% endblock %}

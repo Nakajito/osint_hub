@@ -9,26 +9,17 @@
     <div class="col-md-8">
       <div class="card shadow-sm">
         <div class="card-body">
-          <h3 class="card-title">Subir archivo para extraer metadatos</h3>
-          <p class="text-muted">Carga imágenes u otros archivos para extraer metadatos con ExifTool. Los metadatos se procesan en el servidor y no se comparten.</p>
+          <h3 class="card-title">Metadata (ExifTool) — En desarrollo</h3>
+          <p class="text-muted">La funcionalidad de extracción de metadatos está temporalmente en desarrollo. Volverá pronto con soporte para extracción EXIF y análisis de metadatos.</p>
 
-          <form method="post" enctype="multipart/form-data" id="upload-form">
-            {% csrf_token %}
-            <div class="mb-3">
-              <label for="file" class="form-label">Seleccionar archivo</label>
-              <input class="form-control" type="file" id="file" name="file" accept="image/*,video/*,audio/*,application/pdf" required>
-            </div>
+          <div class="alert alert-info">
+            <i class="bi bi-hourglass-split"></i> Estamos trabajando en una interfaz segura y estable para subir archivos. Mientras tanto puedes usar la línea de comandos de <code>exiftool</code> para extraer metadatos localmente.
+          </div>
 
-{% comment %}             <div class="mb-3 form-check">
-              <input type="checkbox" class="form-check-input" id="keep_file" name="keep_file">
-              <label class="form-check-label" for="keep_file">Mantener el archivo en el servidor (opcional)</label>
-            </div> {% endcomment %}
-
-            <div class="d-flex justify-content-between align-items-center">
-              <small class="text-muted">Tamaño máximo recomendado: 10 MB</small>
-              <button type="submit" class="btn btn-primary">Extraer metadatos</button>
-            </div>
-          </form>
+          <div class="d-flex justify-content-between align-items-center">
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary">Volver al inicio</a>
+            <a href="https://exiftool.org/" target="_blank" rel="noopener" class="btn btn-primary">Documentación ExifTool</a>
+          </div>
         </div>
       </div>
     </div>

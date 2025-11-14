@@ -2,6 +2,7 @@ import os
 import tempfile
 import shlex
 import subprocess
+import logging
 from django.shortcuts import render, redirect
 from django.conf import settings
 from django.urls import reverse
@@ -87,8 +88,32 @@ def upload_file(request):
                         metadata = {}
                 else:
                     metadata = {}
+                    # Log stderr for debugging
+                    logging.getLogger(__name__).warning(
+                        "exiftool returned non-zero: %s", proc.stderr
+                    )
             except Exception:
                 metadata = {}
+
+        # Si no se extrajeron metadatos, avisar al usuario con sugerencias
+        if not metadata:
+            # Log for debugging
+            logging.getLogger(__name__).info(
+                "No metadata extracted for file %s (content_type=%s)",
+                uploaded.name,
+                uploaded.content_type,
+            )
+            # User-facing message: more specific for JPEG vs others
+            if uploaded.content_type == "image/jpeg":
+                messages.warning(
+                    request,
+                    "No se encontraron metadatos EXIF. Asegúrate de que la imagen contiene EXIF o instala 'exiftool' en el servidor para una extracción más completa.",
+                )
+            else:
+                messages.warning(
+                    request,
+                    "No se encontraron metadatos. Para formatos distintos a JPEG (PNG, PDF, vídeos) instala 'exiftool' en el sistema o sube un JPEG con EXIF.",
+                )
 
         # Si el usuario no quiere guardar, borrar archivo
         if not keep:

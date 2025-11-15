@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "email_holehe",
     "ExifTool",
     "PhoneSearch",
+    "UsernameSearch",
 ]
 
 MIDDLEWARE = [

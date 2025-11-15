@@ -1,0 +1,48 @@
+/* ========================================
+   COMPONENT: Buttons
+   Styles for .btn-primary, .btn-outline-primary, .btn-secondary
+   ======================================== */
+.btn-primary {
+    background-color: var(--primary-orange);
+    border-color: var(--primary-orange);
+    color: var(--text-light);
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--orange-dark);
+    border-color: var(--orange-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-outline-primary {
+    color: var(--primary-orange);
+    border-color: var(--primary-orange);
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-orange);
+    border-color: var(--primary-orange);
+    color: var(--text-light);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+    background-color: var(--primary-blue);
+    border-color: var(--primary-blue);
+    color: var(--text-light);
+}
+
+.btn-secondary:hover {
+    background-color: var(--blue-dark);
+    border-color: var(--blue-dark);
+}

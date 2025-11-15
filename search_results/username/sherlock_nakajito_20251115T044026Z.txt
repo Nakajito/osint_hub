@@ -1,0 +1,444 @@
+Sherlock results for: nakajito
+Timestamp: 2025-11-15T04:40:26.797567Z
+
+*] Checking username nakajito on	-	NO
+ResearchGate	-	YES
+1337x	-	NO
+2Dimensions	-	NO
+7Cups	-	NO
+9GAG	-	NO
+About.me	-	NO
+Academia.edu	-	NO
+Airbit	-	NO
+Airliners	-	YES
+AllMyLinks	-	NO
+AniWorld	-	NO
+Anilist	-	NO
+Apple Developer	-	NO
+Apple Discussions	-	NO
+Aparat	-	NO
+Archive of Our Own	-	NO
+Arduino Forum	-	NO
+ArtStation	-	NO
+Asciinema	-	NO
+Ask Fedora	-	NO
+Atcoder	-	NO
+Vjudge	-	NO
+Audiojungle	https://audiojungle.net/user/nakajito	YES
+Autofrage	-	NO
+Avizo	-	NO
+AWS Skills Profile	-	NO
+BOOTH	-	YES
+Bandcamp	-	NO
+Bazar.cz	-	NO
+Behance	-	NO
+Bezuzyteczna	-	NO
+BiggerPockets	-	NO
+BioHacking	-	NO
+BitBucket	-	NO
+Bitwarden Forum	-	NO
+Blipfoto	-	NO
+Blitz Tactics	-	NO
+Blogger	-	NO
+Bluesky	-	NO
+Bookcrossing	-	NO
+BoardGameGeek	-	NO
+BraveCommunity	-	NO
+BreachSta.rs Forum	-	NO
+BugCrowd	-	NO
+BuyMeACoffee	-	NO
+BuzzFeed	-	NO
+Cfx.re Forum	-	NO
+CGTrader	-	NO
+CNET	-	NO
+CSSBattle	-	NO
+CTAN	-	NO
+Caddy Community	-	NO
+Car Talk Community	-	NO
+Carbonmade	-	NO
+Career.habr	-	NO
+CashApp	-	NO
+Championat	-	NO
+Chaos	-	NO
+Chatujme.cz	-	NO
+Chess	https://www.chess.com/member/nakajito	YES
+Choice Community	-	NO
+Clapper	-	NO
+CloudflareCommunity	-	NO
+Clozemaster	-	NO
+Clubhouse	-	NO
+Code Snippet Wiki	-	NO
+Codeberg	-	NO
+Codecademy	https://www.codecademy.com/profiles/nakajito	YES
+Codechef	-	NO
+Codeforces	-	NO
+Codepen	-	NO
+Coders Rank	https://profile.codersrank.io/user/nakajito/	YES
+Coderwall	-	NO
+CodeSandbox	-	NO
+Codewars	-	NO
+Codolio	-	NO
+Coinvote	-	NO
+ColourLovers	-	NO
+Contently	-	NO
+Coroflot	-	NO
+Cplusplus	-	NO
+Cracked	-	NO
+Cracked Forum	-	NO
+Crevado	-	NO
+Crowdin	-	NO
+CryptoHack	-	NO
+Cryptomator Forum	-	NO
+Cults3D	-	YES
+CyberDefenders	-	NO
+DEV Community	-	NO
+DMOJ	-	NO
+DailyMotion	-	NO
+dcinside	-	NO
+Dealabs	-	NO
+DigitalSpy	-	NO
+Discogs	-	NO
+Discord	https://discord.com	YES
+Discord.bio	-	NO
+Discuss.Elastic.co	-	NO
+Diskusjon.no	-	NO
+Disqus	-	NO
+Docker Hub	-	NO
+Dribbble	-	NO
+Duolingo	https://www.duolingo.com/profile/nakajito	YES
+Eintracht Frankfurt Forum	-	NO
+Empretienda AR	-	NO
+Envato Forum	https://forums.envato.com/u/nakajito	YES
+Exposure	-	NO
+exophase	-	NO
+EyeEm	-	NO
+F3.cool	-	NO
+Fameswap	-	NO
+Fandom	-	NO
+Fanpop	-	YES
+Finanzfrage	-	NO
+Flickr	-	NO
+Flightradar24	-	NO
+Flipboard	-	NO
+Football	-	NO
+FortniteTracker	-	NO
+Fosstodon	-	NO
+Framapiaf	-	NO
+Freelancer	-	NO
+Freesound	-	NO
+GaiaOnline	-	NO
+Gamespot	-	NO
+GameFAQs	-	NO
+GeeksforGeeks	-	NO
+Genius (Artists)	-	NO
+Genius (Users)	-	NO
+Gesundheitsfrage	-	NO
+GetMyUni	-	NO
+Giant Bomb	-	NO
+GitBook	-	NO
+GitHub	https://www.github.com/nakajito	YES
+Warframe Market	-	NO
+GitLab	https://gitlab.com/nakajito	YES
+Gitea	-	NO
+Gitee	-	NO
+GoodReads	-	NO
+Google Play	-	NO
+Gradle	-	NO
+Grailed	-	NO
+Gravatar	http://en.gravatar.com/nakajito	YES
+Gumroad	-	NO
+Gutefrage	-	NO
+HackTheBox	-	NO
+Hackaday	-	NO
+HackenProof (Hackers)	-	YES
+HackerEarth	-	NO
+HackerNews	-	NO
+HackerOne	-	NO
+HackerRank	-	NO
+HackerSploit	-	NO
+HackMD	-	NO
+Harvard Scholar	-	NO
+Hashnode	-	NO
+Hive Blog	-	NO
+Holopin	-	NO
+Houzz	-	NO
+HubPages	-	NO
+Hubski	-	NO
+HudsonRock	-	NO
+Hugging Face	-	NO
+IFTTT	-	NO
+Ifunny	-	NO
+IRC-Galleria	-	NO
+Icons8 Community	-	NO
+ImgUp.cz	-	NO
+Imgur	https://imgur.com/user/nakajito	YES
+imood	-	NO
+Instagram	-	NO
+Instapaper	-	NO
+Instructables	-	NO
+Intigriti	-	NO
+Ionic Forum	-	NO
+Issuu	-	NO
+Itch.io	-	NO
+Itemfix	-	NO
+Jellyfin Weblate	-	NO
+Jimdo	-	NO
+Joplin Forum	-	NO
+Jupyter Community Forum	-	NO
+Kaggle	-	NO
+kaskus	-	NO
+Keybase	-	NO
+Kick	-	NO
+Kik	-	NO
+Kongregate	-	NO
+Kvinneguiden	-	NO
+LOR	-	NO
+Laracast	-	NO
+Launchpad	-	NO
+LeetCode	-	NO
+LemmyWorld	-	NO
+LessWrong	-	NO
+Letterboxd	-	NO
+LibraryThing	-	YES
+Lichess	-	NO
+LinkedIn	-	NO
+Linktree	-	NO
+LinuxFR.org	-	NO
+Listed	-	NO
+LiveJournal	-	NO
+Lobsters	-	NO
+LottieFiles	-	NO
+MMORPG Forum	-	NO
+Mamot	-	NO
+Medium	-	NO
+Memrise	-	NO
+Minecraft	-	NO
+MixCloud	-	NO
+Monkeytype	-	NO
+Motorradfrage	-	NO
+MuseScore	-	NO
+MyAnimeList	-	NO
+MyMiniFactory	-	NO
+Mydramalist	-	YES
+Myspace	-	NO
+NICommunityForum	-	NO
+namuwiki	-	NO
+NationStates Nation	-	YES
+NationStates Region	-	YES
+Naver	-	NO
+Needrom	-	NO
+Newgrounds	-	NO
+Nextcloud Forum	-	NO
+Nightbot	-	NO
+Ninja Kiwi	-	NO
+NintendoLife	-	NO
+NitroType	-	NO
+NotABug.org	-	NO
+Nothing Community	-	NO
+Nyaa.si	-	NO
+ObservableHQ	-	NO
+Open Collective	-	NO
+OpenGameArt	-	NO
+OpenStreetMap	-	NO
+Odysee	-	NO
+Opensource	-	NO
+OurDJTalk	-	NO
+Outgress	-	NO
+PCGamer	-	NO
+PSNProfiles.com	-	YES
+Packagist	-	NO
+Pastebin	-	NO
+Patched	-	YES
+Patreon	-	NO
+PentesterLab	-	NO
+HotUKdeals	-	NO
+Mydealz	-	NO
+Chollometro	-	NO
+PepperNL	-	NO
+PepperPL	-	NO
+Preisjaeger	-	NO
+Pepperdeals	-	NO
+PepperealsUS	-	NO
+Promodescuentos	https://www.promodescuentos.com/profile/nakajito	YES
+Periscope	-	NO
+Pinkbike	-	NO
+pixelfed.social	-	NO
+PlayStore	-	NO
+Playstrategy	-	NO
+Plurk	-	NO
+Pokemon Showdown	-	NO
+Polarsteps	-	NO
+Polygon	-	NO
+Polymart	-	NO
+ProductHunt	-	NO
+programming.dev	-	NO
+Pychess	-	NO
+PromoDJ	-	NO
+Pronouns.page	-	NO
+PyPi	-	NO
+Python.org Discussions	-	NO
+Rajce.net	-	NO
+Rarible	-	NO
+Rate Your Music	-	NO
+Rclone Forum	-	NO
+Redbubble	-	NO
+Realmeye	-	NO
+Reisefrage	-	NO
+Replit.com	https://replit.com/@nakajito	YES
+ReverbNation	-	NO
+Roblox	-	NO
+RoyalCams	-	NO
+Ruby Forums	-	NO
+RubyGems	-	NO
+Rumble	-	NO
+RuneScape	-	NO
+SWAPD	-	NO
+Sbazar.cz	-	NO
+Scratch	-	NO
+Scribd	https://www.scribd.com/nakajito	YES
+SEOForum	-	NO
+ShitpostBot5000	-	NO
+Signal	-	NO
+Sketchfab	-	NO
+Slack	-	NO
+Slant	-	NO
+Slashdot	-	NO
+SlideShare	-	NO
+Slides	-	NO
+SmugMug	-	NO
+Smule	-	NO
+Snapchat	https://www.snapchat.com/add/nakajito	YES
+SOOP	-	NO
+SoundCloud	-	NO
+SourceForge	-	NO
+SoylentNews	-	NO
+SpeakerDeck	-	NO
+Speedrun.com	-	NO
+Spells8	-	NO
+Splits.io	-	NO
+Sporcle	-	NO
+Sportlerfrage	-	NO
+SportsRU	-	NO
+Star Citizen	-	NO
+Status Cafe	-	NO
+Steam Community (Group)	-	NO
+Steam Community (User)	https://steamcommunity.com/id/nakajito/	YES
+Strava	-	NO
+SublimeForum	-	NO
+TETR.IO	-	NO
+TheMovieDB	-	NO
+TikTok	https://www.tiktok.com/@nakajito	YES
+Tiendanube	-	NO
+Topcoder	-	NO
+Topmate	-	NO
+TRAKTRAIN	-	NO
+Telegram	https://t.me/nakajito	YES
+Tellonym.me	-	NO
+Tenor	-	NO
+Terraria Forums	-	NO
+ThemeForest	https://themeforest.net/user/nakajito	YES
+tistory	-	NO
+TradingView	-	NO
+Trakt	-	NO
+TrashboxRU	-	NO
+Trawelling	-	NO
+Trello	-	NO
+TryHackMe	-	NO
+Tuna	-	NO
+Tweakers	-	NO
+Twitch	-	NO
+Twitter	-	NO
+Typeracer	-	NO
+Ultimate-Guitar	-	NO
+Unsplash	-	NO
+Untappd	-	NO
+Valorant Forums	-	NO
+VK	-	NO
+VSCO	-	NO
+Velog	-	NO
+Velomania	-	NO
+Venmo	-	NO
+Vero	-	NO
+Vimeo	-	NO
+VirusTotal	-	NO
+VLR	-	NO
+WICG Forum	-	NO
+Wakatime	-	NO
+Warrior Forum	-	NO
+Wattpad	-	NO
+WebNode	-	NO
+Weebly	-	NO
+Wikidot	-	NO
+Wikipedia	https://en.wikipedia.org/wiki/Special:CentralAuth/nakajito?uselang=qqx	YES
+Windy	-	NO
+Wix	-	NO
+WolframalphaForum	-	NO
+WordPress	-	NO
+WordPressOrg	-	NO
+Wordnik	-	NO
+Wykop	-	NO
+Xbox Gamertag	https://xboxgamertag.com/search/nakajito	YES
+YouNow	-	NO
+YouPic	-	NO
+YouTube	https://www.youtube.com/@nakajito	YES
+akniga	-	NO
+authorSTREAM	-	NO
+babyblogRU	-	NO
+chaos.social	-	NO
+couchsurfing	-	NO
+d3RU	-	NO
+dailykos	-	NO
+datingRU	-	NO
+devRant	-	NO
+drive2	-	NO
+eGPU	-	NO
+eintracht	-	NO
+fixya	-	NO
+fl	-	NO
+forum_guns	-	NO
+freecodecamp	-	NO
+furaffinity	-	NO
+geocaching	-	NO
+habr	-	NO
+hackster	-	NO
+hunting	-	NO
+igromania	-	NO
+interpals	-	NO
+irecommend	-	NO
+jbzd.com.pl	-	NO
+jeuxvideo	-	YES
+kofi	-	YES
+kwork	-	NO
+last.fm	-	NO
+leasehackr	-	NO
+livelib	https://www.livelib.ru/reader/nakajito	YES
+mastodon.cloud	-	NO
+mastodon.social	-	NO
+mastodon.xyz	-	NO
+mstdn.social	-	NO
+mercadolivre	-	NO
+minds	-	NO
+moikrug	-	NO
+mstdn.io	-	NO
+nairaland.com	-	NO
+n8n Community	-	NO
+nnRU	-	NO
+note	-	NO
+npm	-	NO
+omg.lol	-	NO
+osu!	https://osu.ppy.sh/users/nakajito	YES
+pikabu	-	NO
+Pinterest	https://www.pinterest.com/nakajito/	YES
+pr0gramm	-	NO
+prog.hu	-	YES
+satsisRU	-	NO
+sessionize	-	NO
+social.tchncs.de	-	NO
+spletnik	-	NO
+toster	-	NO
+tumblr	https://nakajito.tumblr.com/	YES
+uid	-	NO
+write.as	-	NO
+znanylekarz.pl	-	NO
+Platzi	-	NO
+BabyRu	-	NO

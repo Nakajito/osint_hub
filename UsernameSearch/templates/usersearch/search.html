@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Buscar Nombre de Usuario{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="card shadow-sm">
+        <div class="card-body position-relative">
+          <h3 class="card-title">Buscar nombre de usuario</h3>
+          <p class="text-muted">Usa Sherlock para buscar presencia de un nombre de usuario en múltiples plataformas.</p>
+
+          <!-- Loader overlay (hidden by default) -->
+          <div id="search-loader" class="d-none">
+            <div class="text-center">
+              <div class="spinner-border" role="status"><span class="visually-hidden">Cargando...</span></div>
+              <div class="mt-2 loader-label">Buscando…</div>
+            </div>
+          </div>
+
+          <form method="post" id="username-search-form">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="mb-3">
+              {{ form.username.label_tag }}
+              {{ form.username }}
+              {% for err in form.username.errors %}
+                <div class="invalid-feedback d-block">{{ err }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="d-grid">
+              <button class="btn btn-primary" type="submit">
+                <i class="bi bi-search"></i> Buscar
+              </button>
+            </div>
+          </form>
+
+          <script>
+            document.addEventListener('DOMContentLoaded', function(){
+              const form = document.getElementById('username-search-form');
+              const loader = document.getElementById('search-loader');
+              if (!form) return;
+              const submitBtn = form.querySelector('button[type="submit"]');
+              form.addEventListener('submit', function(){
+                if (loader) loader.classList.remove('d-none');
+                if (submitBtn) {
+                  submitBtn.disabled = true;
+                  submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Buscando…';
+                }
+              });
+            });
+          </script>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+/* ========================================
+   COMPONENT: Theme toggle floating button
+   ======================================== */
+.btn-theme-toggle {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-orange) 0%, var(--orange-dark) 100%);
+    border: none;
+    box-shadow: var(--shadow-lg);
+    color: var(--text-light);
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.btn-theme-toggle:hover {
+    transform: scale(1.1) rotate(15deg);
+    box-shadow: 0 8px 20px rgba(255, 101, 0, 0.4);
+}
+
+.btn-theme-toggle:active {
+    transform: scale(0.95);
+}
+
+.btn-theme-toggle i {
+    transition: all 0.3s ease;
+}
+
+@keyframes rotateIcon {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.btn-theme-toggle.rotating i {
+    animation: rotateIcon 0.5s ease-in-out;
+}

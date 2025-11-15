@@ -127,53 +127,7 @@ main {
     width: 80%;
 }
 
-/* ========================================
-   BOTONES
-   ======================================== */
-.btn-primary {
-    background-color: var(--primary-orange);
-    border-color: var(--primary-orange);
-    color: var(--text-light);
-    font-weight: 600;
-    padding: 0.75rem 2rem;
-    border-radius: var(--border-radius);
-    transition: all 0.3s ease;
-}
 
-.btn-primary:hover {
-    background-color: var(--orange-dark);
-    border-color: var(--orange-dark);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-.btn-outline-primary {
-    color: var(--primary-orange);
-    border-color: var(--primary-orange);
-    font-weight: 600;
-    padding: 0.75rem 2rem;
-    border-radius: var(--border-radius);
-    transition: all 0.3s ease;
-}
-
-.btn-outline-primary:hover {
-    background-color: var(--primary-orange);
-    border-color: var(--primary-orange);
-    color: var(--text-light);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-.btn-secondary {
-    background-color: var(--primary-blue);
-    border-color: var(--primary-blue);
-    color: var(--text-light);
-}
-
-.btn-secondary:hover {
-    background-color: var(--blue-dark);
-    border-color: var(--blue-dark);
-}
 
 /* ========================================
    HERO SECTION
@@ -264,23 +218,7 @@ main {
     background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
 }
 
-/* ========================================
-   BADGES
-   ======================================== */
-.badge {
-    padding: 0.5rem 1rem;
-    font-weight: 600;
-    border-radius: var(--border-radius);
-}
 
-.badge.bg-success {
-    background-color: var(--success) !important;
-}
-
-.badge.bg-warning {
-    background-color: var(--warning) !important;
-    color: var(--text-dark) !important;
-}
 
 /* ========================================
    SECCIONES
@@ -308,37 +246,7 @@ main {
     transform: translateX(-50%);
 }
 
-/* ========================================
-   CARACTERÍSTICAS
-   ======================================== */
-.feature-icon {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, var(--primary-orange) 0%, var(--orange-dark) 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1rem;
-    color: var(--text-light);
-    font-size: 1.5rem;
-}
 
-.feature-box {
-    padding: 2rem;
-    text-align: center;
-    transition: all 0.3s ease;
-}
-
-.feature-box:hover {
-    transform: translateY(-5px);
-}
-
-.feature-box h4 {
-    color: var(--primary-blue);
-    font-weight: 700;
-    margin-bottom: 1rem;
-}
 
 /* ========================================
    FOOTER
@@ -429,55 +337,7 @@ footer a:hover {
 .fade-in {
     animation: fadeIn 0.6s ease-in-out;
 }
-/* ========================================
-   BOTÓN DE TEMA (TOGGLE)
-   ======================================== */
-.btn-theme-toggle {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary-orange) 0%, var(--orange-dark) 100%);
-    border: none;
-    box-shadow: var(--shadow-lg);
-    color: var(--text-light);
-    font-size: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    z-index: 1000;
-}
 
-.btn-theme-toggle:hover {
-    transform: scale(1.1) rotate(15deg);
-    box-shadow: 0 8px 20px rgba(255, 101, 0, 0.4);
-}
-
-.btn-theme-toggle:active {
-    transform: scale(0.95);
-}
-
-.btn-theme-toggle i {
-    transition: all 0.3s ease;
-}
-
-/* Animación de rotación para el icono */
-@keyframes rotateIcon {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.btn-theme-toggle.rotating i {
-    animation: rotateIcon 0.5s ease-in-out;
-}
 
 /* ========================================
    AJUSTES PARA TEMA OSCURO
@@ -648,12 +508,5 @@ footer a:hover {
         padding: 0.5rem 1.5rem;
         font-size: 0.9rem;
     }
-    
-    .btn-theme-toggle {
-        width: 50px;
-        height: 50px;
-        font-size: 1.2rem;
-        bottom: 1rem;
-        right: 1rem;
-    }
 }
+

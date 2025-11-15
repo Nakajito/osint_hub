@@ -1,0 +1,32 @@
+/* ========================================
+   COMPONENT: Feature box / icons
+   Styles for .feature-icon and .feature-box
+   ======================================== */
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary-orange) 0%, var(--orange-dark) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    color: var(--text-light);
+    font-size: 1.5rem;
+}
+
+.feature-box {
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.feature-box:hover {
+    transform: translateY(-5px);
+}
+
+.feature-box h4 {
+    color: var(--primary-blue);
+    font-weight: 700;
+    margin-bottom: 1rem;
+}

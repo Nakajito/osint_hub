@@ -89,27 +89,27 @@
             </div>
         </div>
 
-        <!-- Tarjeta: Username Search (Próximamente) -->
+        <!-- Tarjeta: Username Search -->
         <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card h-100 shadow-sm">
+            <div class="card h-100 shadow-sm hover-card">
                 <div class="card-body text-center">
                     <div class="mb-3">
-                        <i class="bi bi-person-badge display-3 text-secondary"></i>
+                        <i class="bi bi-person-badge display-3 text-primary"></i>
                     </div>
                     <h5 class="card-title fw-bold">Username Search</h5>
                     <p class="card-text text-muted">
                         Busca nombres de usuario a través de diferentes redes sociales 
-                        y plataformas online.
+                        y plataformas online usando Sherlock.
                     </p>
                     <div class="d-grid">
-                        <button class="btn btn-secondary" disabled>
-                            <i class="bi bi-hourglass-split"></i> Próximamente
-                        </button>
+                        <a href="{% url 'usersearch:search' %}" class="btn btn-primary">
+                            <i class="bi bi-search"></i> Buscar usuario
+                        </a>
                     </div>
                 </div>
                 <div class="card-footer bg-transparent border-top-0">
                     <small class="text-muted">
-                        <i class="bi bi-clock-fill"></i> En desarrollo
+                        <i class="bi bi-check-circle-fill text-success"></i> Disponible
                     </small>
                 </div>
             </div>

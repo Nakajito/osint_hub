@@ -1,0 +1,40 @@
+/* ========================================
+   LOADER (UsernameSearch)
+   Centralized styles for the search overlay loader
+   ======================================== */
+#search-loader {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.85);
+    z-index: 20;
+}
+
+[data-bs-theme="dark"] #search-loader {
+    background: rgba(11,25,44,0.85);
+}
+
+#search-loader .spinner-border {
+    color: var(--primary-orange);
+    width: 3rem;
+    height: 3rem;
+}
+
+#search-loader .loader-label {
+    color: var(--primary-blue);
+    font-weight: 700;
+}
+
+@media (max-width: 576px) {
+    #search-loader .spinner-border { width: 2rem; height: 2rem; }
+    #search-loader .loader-label { font-size: 0.9rem; }
+}
+
+/* Results table toggle: hide not-found rows by default unless .show-all is present */
+.results-table tbody tr.not-found { display: none; }
+.results-table.show-all tbody tr.not-found { display: table-row; }

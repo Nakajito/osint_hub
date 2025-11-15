@@ -1,0 +1,18 @@
+/* ========================================
+   COMPONENT: Badges
+   Styles for .badge variants
+   ======================================== */
+.badge {
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    border-radius: var(--border-radius);
+}
+
+.badge.bg-success {
+    background-color: var(--success) !important;
+}
+
+.badge.bg-warning {
+    background-color: var(--warning) !important;
+    color: var(--text-dark) !important;
+}

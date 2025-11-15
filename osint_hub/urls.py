@@ -10,6 +10,7 @@ urlpatterns = [
     path("email/", include("email_holehe.urls")),
     path("exiftool/", include("ExifTool.urls")),
     path("phone/", include("PhoneSearch.urls")),
+    path("user/", include("UsernameSearch.urls")),
 ]
 
 # Handlers de errores personalizados

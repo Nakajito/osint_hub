@@ -111,13 +111,32 @@ def search_username(request):
         if form.is_valid():
             username = form.cleaned_data.get("username")
             try:
-                results_dir = getattr(settings, "BASE_DIR", None)
+                # Determine where to persist search results.
+                # Priority: settings.SEARCH_RESULTS_DIR -> user-local (~/.local/share/osint_hub)
+                # -> fallback to settings.BASE_DIR/search_results
                 base_results = None
-                if results_dir:
-                    base_results = os.path.join(
-                        results_dir, "search_results", "username"
-                    )
-                    os.makedirs(base_results, exist_ok=True)
+                search_root = getattr(settings, "SEARCH_RESULTS_DIR", None)
+                if not search_root:
+                    try:
+                        search_root = os.path.expanduser("~/.local/share/osint_hub")
+                    except Exception:
+                        search_root = None
+                if not search_root:
+                    project_base = getattr(settings, "BASE_DIR", None)
+                    if project_base:
+                        search_root = os.path.join(project_base, "search_results")
+
+                if search_root:
+                    # Use a per-username subdirectory to avoid collisions between searches
+                    base_results = os.path.join(search_root, username)
+                    try:
+                        os.makedirs(base_results, exist_ok=True)
+                    except Exception:
+                        logger.exception(
+                            "Failed to create results directory: %s", base_results
+                        )
+                        base_results = None
+                logger.info("search_username: persistence dir=%s", base_results)
 
                 results = _run_sherlock(username)
 

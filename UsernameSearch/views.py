@@ -238,30 +238,29 @@ def download_results(request):
     """Return a plain-text file with the search results stored in session."""
     results = request.session.get("username_search_results", [])
     username = request.session.get("username_search_username", "-")
+    # Build CSV content
+    import csv
+    from io import StringIO
 
-    lines = []
-    header = f"Sherlock results for: {username}"
-    header_time = f"Timestamp: {datetime.utcnow().isoformat()}Z"
-    lines.append(header)
-    lines.append(header_time)
-    lines.append("")
+    sio = StringIO()
+    writer = csv.writer(sio)
+
+    # CSV columns (header + rows)
+    writer.writerow(["site", "url", "exists", "error"])
 
     if not results:
-        lines.append("No results found.")
+        # no results -> produce no data rows (only header), or optionally one row indicating empty
+        pass
     else:
         for r in results:
-            site = r.get("site") or "-"
-            url = r.get("url") or "-"
+            site = r.get("site") or ""
+            url = r.get("url") or ""
             exists = "YES" if r.get("exists") else "NO"
-            # include possible error field
-            error = r.get("error")
-            if error:
-                lines.append(f"{site}\t{url}\t{exists}\tERROR: {error}")
-            else:
-                lines.append(f"{site}\t{url}\t{exists}")
+            error = r.get("error") or ""
+            writer.writerow([site, url, exists, error])
 
-    content = "\n".join(lines)
-    filename = f"sherlock_{username}.txt"
-    response = HttpResponse(content, content_type="text/plain; charset=utf-8")
+    content = sio.getvalue()
+    filename = f"sherlock_{username}.csv"
+    response = HttpResponse(content, content_type="text/csv; charset=utf-8")
     response["Content-Disposition"] = f'attachment; filename="{filename}"'
     return response

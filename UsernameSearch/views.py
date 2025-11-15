@@ -165,7 +165,10 @@ def search_username(request):
                 # Increment a per-session counter and, after 3 searches, clear the
                 # `search_results/username` directory to remove persisted files.
                 try:
-                    cnt = int(request.session.get("username_search_dir_clean_count", 0)) + 1
+                    cnt = (
+                        int(request.session.get("username_search_dir_clean_count", 0))
+                        + 1
+                    )
                     request.session["username_search_dir_clean_count"] = cnt
                     if base_results and cnt >= 3:
                         try:
@@ -177,13 +180,21 @@ def search_username(request):
                                     elif os.path.isdir(path):
                                         shutil.rmtree(path)
                                 except Exception:
-                                    logger.exception("Failed to remove result file during auto-clean: %s", path)
+                                    logger.exception(
+                                        "Failed to remove result file during auto-clean: %s",
+                                        path,
+                                    )
                         except Exception:
-                            logger.exception("Failed to iterate results dir for auto-clean: %s", base_results)
+                            logger.exception(
+                                "Failed to iterate results dir for auto-clean: %s",
+                                base_results,
+                            )
                         # reset counter after cleaning
                         request.session["username_search_dir_clean_count"] = 0
                 except Exception:
-                    logger.exception("Error updating username_search_dir_clean_count in session")
+                    logger.exception(
+                        "Error updating username_search_dir_clean_count in session"
+                    )
 
                 return redirect(reverse("usersearch:results"))
             except Exception as e:

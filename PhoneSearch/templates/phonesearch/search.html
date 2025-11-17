@@ -24,18 +24,15 @@
               <div class="card-body">
                 <h6 class="card-title">Ejemplos de formato</h6>
                 <small class="text-muted d-block">
-                  <strong>México:</strong> ignorant 521 5535664668<br>
-                  <strong>España:</strong> ignorant 34 644637111<br>
-                  <strong>Colombia:</strong> ignorant 57 3101234567<br>
-                  <strong>Argentina:</strong> ignorant 54 1123456789
+                  <strong>México:</strong> 521 5512345678<br>
+                  <strong>España:</strong> 34 644637111<br>
+                  <strong>Colombia:</strong> 57 3101234567<br>
+                  <strong>Argentina:</strong> 54 1123456789
                 </small>
               </div>
             </div>
 
-            <div class="alert alert-info">
-              <i class="bi bi-info-circle"></i> 
-              <strong>Privacidad:</strong> Esta búsqueda no notifica al propietario del número. Los datos son procesados en el servidor y no se guardan.
-            </div>
+            {% include 'includes/privacy_notice.html' %}
 
             <div class="d-flex justify-content-between align-items-center">
               <a href="{% url 'home' %}" class="btn btn-outline-secondary">Volver</a>

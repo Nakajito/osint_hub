@@ -310,7 +310,6 @@ main {
 }
 
 
-
 /* ========================================
    SECCIONES
    ======================================== */
@@ -347,6 +346,14 @@ footer {
     color: var(--text-light);
     padding: 2rem 0;
     margin-top: auto;
+    position: relative;
+    z-index: 100;
+}
+
+/* Estilos para el contenido del footer */
+.footer-content {
+    position: relative;
+    z-index: 101;
 }
 
 footer a {
@@ -357,6 +364,87 @@ footer a {
 
 footer a:hover {
     color: var(--orange-light);
+    text-decoration: underline;
+}
+
+/* Estilos para los enlaces de navegación del footer */
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-links a {
+    color: var(--text-light);
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--primary-orange);
+    opacity: 1;
+    padding-left: 5px;
+}
+
+/* Estilos para la información de copyright */
+.footer-info {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1.5rem;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+/* Estilos para íconos sociales en el footer */
+.social-links {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.social-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+    background: var(--primary-orange);
+    transform: translateY(-3px);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    footer {
+        padding: 1.5rem 0;
+    }
+    
+    .footer-content {
+        text-align: center;
+    }
+    
+    .footer-links {
+        margin: 1rem 0;
+    }
+    
+    .social-links {
+        margin: 1rem 0;
+    }
+    
+    .footer-info {
+        text-align: center;
+        padding-top: 1rem;
+        margin-top: 1rem;
+    }
 }
 
 /* ========================================

@@ -1,0 +1,44 @@
+/* Estilos para la tabla de resultados */
+.table-responsive {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.table thead {
+    position: sticky;
+    top: 0;
+    background-color: var(--bg-light);
+    z-index: 10;
+}
+
+[data-bs-theme="dark"] .table thead {
+    background-color: #0B192C;
+}
+
+[data-bs-theme="dark"] .table {
+    color: var(--text-light);
+}
+
+[data-bs-theme="dark"] .table tbody tr {
+    border-color: rgba(255, 101, 0, 0.1);
+}
+
+[data-bs-theme="dark"] .table tbody tr:hover {
+    background-color: rgba(255, 101, 0, 0.05);
+}
+
+/* Animación de entrada */
+.table tbody tr {
+    animation: fadeInRow 0.3s ease-in-out;
+}
+
+@keyframes fadeInRow {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}

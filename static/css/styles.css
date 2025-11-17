@@ -346,6 +346,7 @@ footer {
     color: var(--text-light);
     padding: 2rem 0;
     margin-top: auto;
+    flex-shrink: 0;
     position: relative;
     z-index: 100;
 }

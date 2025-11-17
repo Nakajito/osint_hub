@@ -166,7 +166,7 @@ main {
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-sm);
     transition: all 0.3s ease;
-    height: 100%;
+    /* Eliminado height: 100% para permitir altura automática */
 }
 
 .card:hover {
@@ -192,6 +192,17 @@ main {
     padding: 1.5rem;
 }
 
+/* Estilo específico para cards con contenido compacto */
+.card-body.py-3 {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+}
+
+/* Estilo para cards sin padding en el body (tablas) */
+.card-body.p-0 {
+    padding: 0 !important;
+}
+
 .card-title {
     color: var(--primary-blue);
     font-weight: 700;
@@ -201,6 +212,86 @@ main {
 .card-text {
     color: var(--text-muted);
     line-height: 1.6;
+}
+
+/* Estilos específicos para la tabla dentro del card */
+.card .table-responsive {
+    border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+}
+
+.card .table {
+    margin-bottom: 0;
+}
+
+.card .table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    color: var(--primary-blue);
+    padding: 1rem 0.75rem;
+}
+
+.card .table tbody td {
+    padding: 0.75rem;
+    vertical-align: middle;
+}
+
+.card .table tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+/* Estilos para badges dentro de la tabla */
+.card .badge {
+    font-size: 0.75em;
+    padding: 0.35em 0.65em;
+}
+
+/* Estilos para cards de texto centrado (sin resultados) */
+.card.text-center .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card-header {
+        padding: 1rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .card-body.py-3 {
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+    }
+    
+    .card .table thead th,
+    .card .table tbody td {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* Estilos para el card de resumen compacto */
+.search-summary-card .card-body {
+    padding: 0.75rem 1rem;
+}
+
+.search-summary-card .row {
+    align-items: center;
+}
+
+.search-summary-card h4 {
+    margin-bottom: 0.25rem;
+    font-size: 1.5rem;
+}
+
+.search-summary-card .small {
+    font-size: 0.8rem;
 }
 
 /* Tarjeta disponible */

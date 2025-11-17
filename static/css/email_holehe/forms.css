@@ -1,0 +1,45 @@
+/* Estilos específicos para la página de búsqueda */
+#emailSearchForm {
+    position: relative;
+}
+
+/* Constrain the search card for better legibility and center it */
+.search-card {
+    max-width: 720px; /* Esto asegura que el formulario dentro del 'col' no sea excesivamente ancho */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media (max-width: 576px) {
+    .search-card { padding-left: 0.5rem; padding-right: 0.5rem; }
+}
+
+.form-control:focus {
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 0 0.25rem rgba(255, 101, 0, 0.25);
+}
+
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+/* Tema oscuro para el formulario */
+[data-bs-theme="dark"] .form-control {
+    background-color: #1a2332;
+    border-color: rgba(255, 101, 0, 0.2);
+    color: var(--text-light);
+}
+
+[data-bs-theme="dark"] .form-control:focus {
+    background-color: #0f1a2a;
+    border-color: var(--primary-orange);
+    color: var(--text-light);
+}
+
+[data-bs-theme="dark"] .form-text {
+    color: #b0b0b0 !important;
+}

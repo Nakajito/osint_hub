@@ -126,6 +126,14 @@ MEDIA_ROOT = BASE_DIR / "media"
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Directory to persist username search results (outside project root by default).
+# Can be overridden with an environment-specific absolute path via
+# the SEARCH_RESULTS_DIR setting or env var when deploying.
+SEARCH_RESULTS_DIR = os.environ.get(
+    "SEARCH_RESULTS_DIR",
+    os.path.expanduser("~/.local/share/osint_hub/search_results"),
+)
+
 # Configuración de seguridad para producción
 if not DEBUG:
     SECURE_SSL_REDIRECT = True

@@ -196,6 +196,31 @@ def search_username(request):
                         "Error updating username_search_dir_clean_count in session"
                     )
 
+                # Ensure any legacy artifact created in the project root with the
+                # username (e.g. 'nakajito.txt') is removed so we don't persist
+                # sensitive output into the repo root.
+                try:
+                    project_base = getattr(settings, "BASE_DIR", None)
+                    if project_base:
+                        # Only remove files in the project base with specific extensions
+                        for ext in (".txt", ".json", ".csv", ""):
+                            candidate = os.path.join(project_base, f"{username}{ext}")
+                            if os.path.exists(candidate) and os.path.isfile(candidate):
+                                try:
+                                    os.unlink(candidate)
+                                    logger.info(
+                                        "Removed legacy root file: %s", candidate
+                                    )
+                                except Exception:
+                                    logger.exception(
+                                        "Failed to remove legacy root file: %s",
+                                        candidate,
+                                    )
+                except Exception:
+                    logger.exception(
+                        "Error while attempting to clean legacy root files"
+                    )
+
                 return redirect(reverse("usersearch:results"))
             except Exception as e:
                 logger.exception("Error running sherlock: %s", e)

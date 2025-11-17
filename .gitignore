@@ -398,4 +398,9 @@ staticfiles/
 # Archivos de sesión
 sessions/
 
+
+# search user folder
+search_results/
+
+
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode,linux,django,windows,macos,venv,git

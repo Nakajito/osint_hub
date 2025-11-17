@@ -3,6 +3,7 @@
 {% load django_bootstrap5 %}
 
 {% block title %}Búsqueda de Email - OSINT Hub{% endblock %}
+<link rel="stylesheet" href="{% static 'css/email_holehe/table.css' %}">
 
 {% block content %}
 <div class="container">
@@ -102,73 +103,7 @@
     </div>
 </div>
 
-<style>
-/* Estilos específicos para la página de búsqueda */
-#emailSearchForm {
-    position: relative;
-}
 
-.form-control:focus {
-    border-color: var(--primary-orange);
-    box-shadow: 0 0 0 0.25rem rgba(255, 101, 0, 0.25);
-}
 
-.card {
-    transition: all 0.3s ease;
-}
-
-.card:hover {
-    transform: translateY(-2px);
-}
-
-/* Tema oscuro para el formulario */
-[data-bs-theme="dark"] .form-control {
-    background-color: #1a2332;
-    border-color: rgba(255, 101, 0, 0.2);
-    color: var(--text-light);
-}
-
-[data-bs-theme="dark"] .form-control:focus {
-    background-color: #0f1a2a;
-    border-color: var(--primary-orange);
-    color: var(--text-light);
-}
-
-[data-bs-theme="dark"] .form-text {
-    color: #b0b0b0 !important;
-}
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('emailSearchForm');
-    const emailInput = document.getElementById('email');
-    
-    // Validación adicional en el frontend
-    form.addEventListener('submit', function(e) {
-        const email = emailInput.value.trim();
-        
-        if (!email) {
-            e.preventDefault();
-            alert('Por favor, ingresa un correo electrónico');
-            emailInput.focus();
-            return false;
-        }
-        
-        // Validación básica de formato de email
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            e.preventDefault();
-            alert('Por favor, ingresa un correo electrónico válido');
-            emailInput.focus();
-            return false;
-        }
-        
-        // Mostrar indicador de carga
-        const submitBtn = form.querySelector('button[type="submit"]');
-        submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Buscando...';
-        submitBtn.disabled = true;
-    });
-});
-</script>
+<script src="{% static "js/email_holehe/search.js" %}"></script>
 {% endblock %}

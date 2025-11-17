@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block title %}Resultados - Email Search - OSINT Hub{% endblock %}
+<link rel="stylesheet" href="{% static 'css/email_holehe/table_results.css' %}">
 
 {% block content %}
 <div class="container">
@@ -40,7 +41,7 @@
                             <i class="bi bi-bar-chart"></i> Resumen
                         </h5>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body h-50">
                         <div class="row text-center">
                             <div class="col-md-4 mb-3">
                                 <h3 class="text-success">{{ results|length }}</h3>
@@ -139,50 +140,4 @@
     </div>
 </div>
 
-<style>
-/* Estilos para la tabla de resultados */
-.table-responsive {
-    max-height: 600px;
-    overflow-y: auto;
-}
-
-.table thead {
-    position: sticky;
-    top: 0;
-    background-color: var(--bg-light);
-    z-index: 10;
-}
-
-[data-bs-theme="dark"] .table thead {
-    background-color: #0B192C;
-}
-
-[data-bs-theme="dark"] .table {
-    color: var(--text-light);
-}
-
-[data-bs-theme="dark"] .table tbody tr {
-    border-color: rgba(255, 101, 0, 0.1);
-}
-
-[data-bs-theme="dark"] .table tbody tr:hover {
-    background-color: rgba(255, 101, 0, 0.05);
-}
-
-/* Animación de entrada */
-.table tbody tr {
-    animation: fadeInRow 0.3s ease-in-out;
-}
-
-@keyframes fadeInRow {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-</style>
 {% endblock %}

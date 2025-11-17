@@ -82,19 +82,19 @@
           </div>
 
           {% if found_count > 0 %}
-          <div class="alert alert-info">
+          <div class="alert alert-info alert-permanent">
             <i class="bi bi-info-circle"></i> 
             Se encontró el número en <strong>{{ found_count }}</strong> plataforma(s). Puedes hacer clic en los dominios para visitar los sitios.
           </div>
           {% else %}
-          <div class="alert alert-success">
+          <div class="alert alert-success alert-permanent">
             <i class="bi bi-check-circle"></i> 
             El número no fue encontrado en las plataformas buscadas.
           </div>
           {% endif %}
 
           {% else %}
-          <div class="alert alert-warning">No se encontraron resultados o hubo un error durante la búsqueda.</div>
+          <div class="alert alert-warning alert-permanent">No se encontraron resultados o hubo un error durante la búsqueda.</div>
           {% endif %}
 
         </div>

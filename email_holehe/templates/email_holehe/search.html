@@ -7,101 +7,97 @@
 
 {% block content %}
 <div class="container">
-    <!-- Header de la página -->
-    <div class="row py-4">
-        <div class="col-12 text-center">
-            <h1 class="display-5 fw-bold">
-                <i class="bi bi-envelope-at text-orange"></i> Email Search
-            </h1>
-            <p class="lead text-muted">
-                Verifica la presencia de un correo electrónico en múltiples plataformas
-            </p>
-        </div>
-    </div>
-
-    <!-- Formulario de búsqueda -->
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-lg">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="bi bi-search"></i> Ingresa el correo electrónico
-                    </h5>
-                </div>
-                <div class="card-body p-4">
-                    <form method="post" id="emailSearchForm">
-                        {% csrf_token %}
-                        
-                        <div class="mb-4">
-                            <label for="email" class="form-label">
-                                <i class="bi bi-envelope"></i> Correo Electrónico
-                            </label>
-                            <input 
-                                type="email" 
-                                class="form-control form-control-lg" 
-                                id="email" 
-                                name="email" 
-                                placeholder="ejemplo@correo.com"
-                                required
-                                autocomplete="email"
-                            >
-                            <div class="form-text">
-                                Ingresa el correo electrónico que deseas investigar
-                            </div>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-search"></i> Buscar Email
-                            </button>
-                            <a href="{% url 'home' %}" class="btn btn-outline-secondary">
-                                <i class="bi bi-arrow-left"></i> Volver al Inicio
-                            </a>
-                        </div>
-                    </form>
-                </div>
+   <!-- Header de la página -->
+   <div class="row py-4">
+      <div class="col-12 text-center">
+         <h1 class="display-5 fw-bold">
+            <i class="bi bi-envelope-at text-orange"></i> Email Search
+         </h1>
+         <p class="lead text-muted">
+            Verifica la presencia de un correo electrónico en múltiples plataformas
+         </p>
+      </div>
+   </div>
+   <!-- Formulario de búsqueda -->
+   <div class="row justify-content-center">
+      <div class="col-lg-8">
+         <div class="card shadow-lg">
+            <div class="card-header">
+               <h5 class="mb-0">
+                  <i class="bi bi-search"></i> Ingresa el correo electrónico
+               </h5>
             </div>
-
-            <!-- Información adicional -->
-            <div class="row mt-4">
-                <div class="col-md-6 mb-3">
-                    <div class="card h-100">
+            <div class="card-body p-4">
+               <form method="post" id="emailSearchForm">
+                  {% csrf_token %}
+                  <div class="mb-4">
+                     <label for="email" class="form-label">
+                     <i class="bi bi-envelope"></i> Correo Electrónico
+                     </label>
+                     <input 
+                        type="email" 
+                        class="form-control form-control-lg" 
+                        id="email" 
+                        name="email" 
+                        placeholder="ejemplo@correo.com"
+                        required
+                        autocomplete="email"
+                        >
+                     <div class="form-text">
+                        Ingresa el correo electrónico que deseas investigar
+                     </div>
+                  </div>
+                  <div class="d-grid gap-2">
+                     <button type="submit" class="btn btn-primary btn-lg">
+                     <i class="bi bi-search"></i> Buscar Email
+                     </button>
+                     <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                     <i class="bi bi-arrow-left"></i> Volver al Inicio
+                     </a>
+                  </div>
+               </form>
+               <!-- Información adicional -->
+               <div class="row mt-4">
+                  <div class="col-md-6 mb-3">
+                     <div class="card h-100">
                         <div class="card-body">
-                            <h6 class="card-title">
-                                <i class="bi bi-info-circle text-info"></i> ¿Cómo funciona?
-                            </h6>
-                            <p class="card-text small text-muted">
-                                Esta herramienta utiliza Holehe para verificar si un correo 
-                                electrónico está registrado en más de 120 plataformas diferentes 
-                                incluyendo redes sociales, servicios de streaming y más.
-                            </p>
+                           <h6 class="card-title">
+                              <i class="bi bi-info-circle text-info"></i> ¿Cómo funciona?
+                           </h6>
+                           <p class="card-text small text-muted">
+                              Esta herramienta utiliza Holehe para verificar si un correo 
+                              electrónico está registrado en más de 120 plataformas diferentes 
+                              incluyendo redes sociales, servicios de streaming y más.
+                           </p>
                         </div>
-                    </div>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <div class="card h-100">
+                     </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                     <div class="card h-100">
                         <div class="card-body">
-                            <h6 class="card-title">
-                                <i class="bi bi-shield-check text-success"></i> Privacidad
-                            </h6>
-                            <p class="card-text small text-muted">
-                                Las búsquedas se realizan de manera anónima. No almacenamos 
-                                tu dirección IP ni compartimos la información con terceros.
-                            </p>
+                           <h6 class="card-title">
+                              <i class="bi bi-shield-check text-success"></i> Privacidad
+                           </h6>
+                           <p class="card-text small text-muted">
+                              Las búsquedas se realizan de manera anónima. No almacenamos 
+                              tu dirección IP ni compartimos la información con terceros.
+                           </p>
                         </div>
-                    </div>
-                </div>
+                     </div>
+                  </div>
+               </div>
             </div>
-
-            <!-- Disclaimer -->
-            <div class="alert alert-warning alert-permanent mt-4" role="alert">
-                <i class="bi bi-exclamation-triangle-fill"></i> 
-                <strong>Importante:</strong> Esta herramienta es solo para fines educativos 
-                y de investigación legal. Respeta la privacidad y las leyes aplicables.
-            </div>
-        </div>
-    </div>
+         </div>
+      </div>
+   </div>
+   <!-- Disclaimer -->
+   <div class="alert alert-warning alert-permanent mt-4" role="alert">
+      <i class="bi bi-exclamation-triangle-fill"></i> 
+      <strong>Importante:</strong> Esta herramienta es solo para fines educativos 
+      y de investigación legal. Respeta la privacidad y las leyes aplicables.
+   </div>
 </div>
+
 
 
 

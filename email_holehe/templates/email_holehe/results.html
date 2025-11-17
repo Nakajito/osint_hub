@@ -1,143 +1,117 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block title %}Resultados - Email Search - OSINT Hub{% endblock %}
 <link rel="stylesheet" href="{% static 'css/email_holehe/table_results.css' %}">
-
 {% block content %}
-<div class="container">
-    <!-- Header de resultados -->
-    <div class="row py-4">
-        <div class="col-12 text-center">
-            <h1 class="display-5 fw-bold">
-                <i class="bi bi-clipboard-data text-orange"></i> Resultados de Búsqueda
-            </h1>
-            <p class="lead text-muted">
-                Correo electrónico: <strong class="text-orange">{{ email }}</strong>
-            </p>
-        </div>
-    </div>
-
-    <!-- Acciones -->
-    <div class="row mb-4">
-        <div class="col-12 text-center">
-            <a href="{% url 'email_holehe:search' %}" class="btn btn-primary">
-                <i class="bi bi-search"></i> Nueva Búsqueda
-            </a>
-            <a href="{% url 'home' %}" class="btn btn-outline-secondary">
-                <i class="bi bi-house"></i> Volver al Inicio
-            </a>
-        </div>
-    </div>
-
-    <!-- Resultados -->
-    <div class="row">
-        <div class="col-12">
-            {% if results %}
-                <!-- Resumen de resultados -->
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0">
-                            <i class="bi bi-bar-chart"></i> Resumen
-                        </h5>
-                    </div>
-                    <div class="card-body h-50">
-                        <div class="row text-center">
-                            <div class="col-md-4 mb-3">
-                                <h3 class="text-success">{{ results|length }}</h3>
-                                <p class="text-muted mb-0">Plataformas encontradas</p>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <h3 class="text-info">120+</h3>
-                                <p class="text-muted mb-0">Plataformas verificadas</p>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <h3 class="text-orange">{{ email }}</h3>
-                                <p class="text-muted mb-0">Email analizado</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Lista de resultados -->
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">
-                            <i class="bi bi-list-check"></i> Plataformas Detectadas
-                        </h5>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead>
-                                    <tr>
-                                        <th><i class="bi bi-hash"></i></th>
-                                        <th>Plataforma</th>
-                                        <th>Estado</th>
-                                        <th>Detalles</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for result in results %}
-                                    <tr>
-                                        <td>{{ forloop.counter }}</td>
-                                        <td>
-                                            <strong>{{ result.platform }}</strong>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-success">
-                                                <i class="bi bi-check-circle"></i> Encontrado
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <small class="text-muted">{{ result.details }}</small>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            {% else %}
-                <!-- Sin resultados -->
-                <div class="card text-center">
-                    <div class="card-body py-5">
-                        <i class="bi bi-inbox display-1 text-muted mb-3"></i>
-                        <h4 class="mb-3">No se encontraron resultados</h4>
-                        <p class="text-muted mb-4">
-                            El correo electrónico <strong>{{ email }}</strong> no fue encontrado 
-                            en ninguna de las plataformas verificadas.
-                        </p>
-                        <div class="alert alert-info" role="alert">
-                            <i class="bi bi-info-circle"></i> 
-                            Esto podría significar que:
-                            <ul class="text-start mt-2 mb-0">
-                                <li>El correo no está registrado en plataformas públicas</li>
-                                <li>El correo podría ser incorrecto o no existir</li>
-                                <li>Las plataformas no permiten verificación pública</li>
-                            </ul>
-                        </div>
-                        <a href="{% url 'email_holehe:search' %}" class="btn btn-primary mt-3">
-                            <i class="bi bi-search"></i> Intentar con otro email
-                        </a>
-                    </div>
-                </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- Información adicional -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="alert alert-info" role="alert">
-                <i class="bi bi-lightbulb"></i> 
-                <strong>Tip:</strong> Los resultados muestran solo las plataformas donde se 
-                encontró el correo electrónico. Un resultado vacío no significa necesariamente 
-                que el correo no exista.
+<div class="container mt-4">
+   <!-- Header de resultados -->
+   <div class="row py-4">
+      <div class="col-12 text-center">
+         <h1 class="display-5 fw-bold">
+            <i class="bi bi-clipboard-data text-orange"></i> Resultados de Búsqueda
+         </h1>
+         <p class="lead text-muted">
+            Correo electrónico: <strong class="text-orange">{{ email }}</strong>
+         </p>
+      </div>
+   </div>
+   <!-- Resultados -->
+   <div class="row">
+      <div class="col-12">
+         {% if results %}
+         <!-- Card principal de resultados -->
+         <div class="card shadow-sm">
+            <div class="card-body">
+               <h3 class="card-title">Resultados para <strong class="text-orange">{{ email }}</strong></h3>
+               <!-- Resumen de resultados mejorado -->
+               <div class="mb-3 d-flex align-items-center justify-content-between">
+                  <div class="card bg-light">
+                     <div class="card-body text-center py-3">
+                        <h5 class="card-title text-muted">Encontrado en</h5>
+                        <h2 class="text-success mb-1">{{ results|length }}</h2>
+                        <small class="text-muted">de 120+ plataformas verificadas</small>
+                     </div>
+                  </div>
+                  <!-- Toggle para mostrar/ocultar (opcional) -->
+                  <div class="form-check form-switch">
+                     <input class="form-check-input" type="checkbox" id="toggle-show-all">
+                     <label class="form-check-label small" for="toggle-show-all">Mostrar detalles completos</label>
+                  </div>
+               </div>
+               <!-- Lista de resultados -->
+               <div class="table-responsive">
+                  <table class="table table-sm table-striped results-table">
+                     <thead class="table-dark sticky-top">
+                        <tr>
+                           <th>#</th>
+                           <th>Plataforma</th>
+                           <th>Estado</th>
+                           <th>Detalles</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        {% for result in results %}
+                        <tr>
+                           <td class="fw-bold">{{ forloop.counter }}</td>
+                           <td class="fw-bold">
+                              <strong>{{ result.platform }}</strong>
+                           </td>
+                           <td>
+                              <span class="badge bg-success">
+                              <i class="bi bi-check-circle"></i> Encontrado
+                              </span>
+                           </td>
+                           <td>
+                              <small class="text-muted">{{ result.details }}</small>
+                           </td>
+                        </tr>
+                        {% endfor %}
+                     </tbody>
+                  </table>
+               </div>
+               <!-- Contador de resultados -->
+               <div class="mt-3">
+                  <div class="small text-muted">Mostrando {{ results|length }} plataformas encontradas</div>
+               </div>
+               <!-- Información adicional -->
+               <div class="row mt-4">
+                  <div class="col-12">
+                     <div class="alert alert-info alert-permanent" role="alert">
+                        <i class="bi bi-lightbulb"></i> 
+                        <strong>Tip:</strong> Los resultados muestran solo las plataformas donde se 
+                        encontró el correo electrónico. Un resultado vacío no significa necesariamente 
+                        que el correo no exista.
+                     </div>
+                  </div>
+               </div>
             </div>
-        </div>
-    </div>
+         </div>
+         {% else %}
+         <!-- Sin resultados -->
+         <div class="card text-center shadow-sm">
+            <div class="card-body py-5">
+               <i class="bi bi-inbox display-1 text-muted mb-3"></i>
+               <h4 class="mb-3">No se encontraron resultados</h4>
+               <p class="text-muted mb-4">
+                  El correo electrónico <strong>{{ email }}</strong> no fue encontrado 
+                  en ninguna de las plataformas verificadas.
+               </p>
+               <div class="alert alert-info" role="alert">
+                  <i class="bi bi-info-circle"></i> 
+                  Esto podría significar que:
+                  <ul class="text-start mt-2 mb-0">
+                     <li>El correo no está registrado en plataformas públicas</li>
+                     <li>El correo podría ser incorrecto o no existir</li>
+                     <li>Las plataformas no permiten verificación pública</li>
+                  </ul>
+               </div>
+               <a href="{% url 'email_holehe:search' %}" class="btn btn-primary mt-3">
+               <i class="bi bi-search"></i> Intentar con otro email
+               </a>
+            </div>
+         </div>
+         {% endif %}
+      </div>
+   </div>
 </div>
-
 {% endblock %}

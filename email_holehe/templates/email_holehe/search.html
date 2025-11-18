@@ -1,79 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load django_bootstrap5 %}
-<link rel="stylesheet" href="{% static 'css/email_holehe/forms.css' %}">
+
 {% block title %}Búsqueda de Email - OSINT Hub{% endblock %}
 <link rel="stylesheet" href="{% static 'css/email_holehe/table.css' %}">
 
 {% block content %}
 <div class="container">
-<<<<<<< HEAD
-    <div class="row py-4">
-        <div class="col-12 text-center">
-            <h1 class="display-5 fw-bold">
-                <i class="bi bi-envelope-at text-orange"></i> Email Search
-            </h1>
-            <p class="lead text-muted">
-                Verifica la presencia de un correo electrónico en múltiples plataformas
-            </p>
-        </div>
-    </div>
-
-    
-
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-10 col-lg-8"> 
-            
-            <div class="card shadow-lg search-card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="bi bi-search"></i> Ingresa el correo electrónico
-                    </h5>
-                </div>
-                <div class="card-body p-4">
-                    <form method="post" id="emailSearchForm">
-                        {% csrf_token %}
-                        
-                        <div class="mb-4">
-                            <label for="email" class="form-label">
-                                <i class="bi bi-envelope"></i> Correo Electrónico
-                            </label>
-                            <input 
-                                type="email" 
-                                class="form-control form-control-lg" 
-                                id="email" 
-                                name="email" 
-                                placeholder="ejemplo@correo.com"
-                                required
-                                autocomplete="email"
-                            >
-                            <div class="form-text">
-                                Ingresa el correo electrónico que deseas investigar
-                            </div>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-search"></i> Buscar Email
-                            </button>
-                            <a href="{% url 'home' %}" class="btn btn-outline-secondary">
-                                <i class="bi bi-arrow-left"></i> Volver al Inicio
-                            </a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-        </div> 
-    </div>
-
-    <!-- Sección "Cómo funciona" y Privacy Notice - Fuera del formulario y centrado -->
-    <div class="row justify-content-center mt-4">
-        <div class="col-12 col-md-10 col-lg-8">
-            <div class="row">
-                <div class="col-md-12 mb-3">
-                    <div class="card h-100">
-=======
    <!-- Header de la página -->
    <div class="row py-4">
       <div class="col-12 text-center">
@@ -127,7 +60,6 @@
                <div class="row mt-4">
                   <div class="col-md-6 mb-3">
                      <div class="card h-100">
->>>>>>> dev
                         <div class="card-body">
                            <h6 class="card-title">
                               <i class="bi bi-info-circle text-info"></i> ¿Cómo funciona?
@@ -138,22 +70,6 @@
                               incluyendo redes sociales, servicios de streaming y más.
                            </p>
                         </div>
-<<<<<<< HEAD
-                    </div>
-                </div>
-                <div class="col-md-12 mb-3">
-                    {% include 'includes/privacy_notice.html' %}
-                </div>
-            </div>
-
-            <div class="alert alert-warning alert-permanent mt-4 mb-5" role="alert">
-                <i class="bi bi-exclamation-triangle-fill"></i> 
-                <strong>Importante:</strong> Esta herramienta es solo para fines educativos 
-                y de investigación legal. Respeta la privacidad y las leyes aplicables.
-            </div>
-        </div>
-    </div>
-=======
                      </div>
                   </div>
                   <div class="col-md-6 mb-3">
@@ -180,17 +96,10 @@
       <strong>Importante:</strong> Esta herramienta es solo para fines educativos 
       y de investigación legal. Respeta la privacidad y las leyes aplicables.
    </div>
->>>>>>> dev
 </div>
-        
-<script src="{% static 'js/email_holehe/search_email.js' %}"></script>
 
 
-<<<<<<< HEAD
-{% endblock %}
-=======
 
 
 <script src="{% static "js/email_holehe/search.js" %}"></script>
 {% endblock %}
->>>>>>> dev

@@ -39,7 +39,10 @@
               </div>
             </div>
 
-            {% include 'includes/privacy_notice.html' %}
+            <div class="alert alert-info alert-permanent">
+              <i class="bi bi-info-circle"></i> 
+              <strong>Privacidad:</strong> Esta búsqueda no notifica al propietario del número. Los datos son procesados en el servidor y no se guardan.
+            </div>
 
             <div class="d-flex justify-content-between align-items-center">
               <a href="{% url 'home' %}" class="btn btn-outline-secondary">Volver</a>

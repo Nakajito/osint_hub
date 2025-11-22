@@ -12,7 +12,7 @@ class PhoneSearchForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
-                "placeholder": "ignorant 521 1234567890 (formato: código país + número)",
+                "placeholder": "521 1234567890 (formato: código país + número)",
                 "type": "text",
             }
         ),

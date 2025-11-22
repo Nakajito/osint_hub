@@ -20,34 +20,58 @@
               {{ form.query }}
             </div>
 
-            <div class="card bg-light mb-3">
-              <div class="card-body">
-                <h6 class="card-title">Ejemplos de formato</h6>
-                <small class="text-muted d-block">
-                  <strong>México:</strong> 521 5512345678<br>
-                  <strong>España:</strong> 34 644637111<br>
-                  <strong>Colombia:</strong> 57 3101234567<br>
-                  <strong>Argentina:</strong> 54 1123456789
-                </small>
-              </div>
-            </div>
-
-            <div class="alert alert-info alert-permanent">
-              <i class="bi bi-info-circle"></i> 
-              <strong>Privacidad:</strong> Esta búsqueda no notifica al propietario del número. Los datos son procesados en el servidor y no se guardan.
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center">
-              <a href="{% url 'home' %}" class="btn btn-outline-secondary">Volver</a>
-              <button type="submit" class="btn btn-primary" id="search-btn">
-                <i class="bi bi-search"></i> Buscar
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-lg" id="search-btn">
+                <i class="bi bi-search"></i> Buscar número
               </button>
+              <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver al Inicio
+              </a>
             </div>
+
           </form>
+                         <div class="row mt-4">
+                  <div class="col-md-6 mb-3">
+                     <div class="card h-100">
+                        <div class="card-body">
+                           <h6 class="card-title">
+                              <i class="bi bi-info-circle text-info"></i> ¿Cómo funciona?
+                           </h6>
+                           <p class="card-text small text-muted">
+                              Verifica si un número de teléfono está registrado en plataformas como Instagram, Snapchat, Amazon y más usando Ignorant.
+                           </p>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                     <div class="card h-100">
+                        <div class="card-body">
+                           <h6 class="card-title">
+                              <i class="bi bi-shield-check text-success"></i> Privacidad
+                           </h6>
+                           <p class="card-text small text-muted">
+                              Las búsquedas se realizan de manera anónima. No almacenamos 
+                              tu dirección IP ni compartimos la información con terceros.
+                           </p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
         </div>
       </div>
     </div>
   </div>
+  <div class="alert alert-info alert-permanent mt-5">
+  <i class="bi bi-info-circle"></i> 
+  <strong>Privacidad:</strong> Esta búsqueda no notifica al propietario del número. Los datos son procesados en el servidor y no se guardan.
+</div>
+<!-- Disclaimer -->
+   <div class="alert alert-warning alert-permanent mt-4" role="alert">
+      <i class="bi bi-exclamation-triangle-fill"></i> 
+      <strong>Importante:</strong> Esta herramienta es solo para fines educativos 
+      y de investigación legal. Respeta la privacidad y las leyes aplicables.
+   </div>
+
 </div>
 
 <script>

@@ -1,22 +1,41 @@
-<footer class="bg-dark text-light py-4 mt-5">
-	<div class="container text-center small footer-content">
-		<div class="row">
-			<div class="col-md-6 mb-2 mb-md-0">
-				<a class="text-decoration-none text-light" href="{% url 'home' %}">OSINT Hub</a> &middot; Herramientas OSINT
-			</div>
-		<div class="col-md-6">
-			<a class="text-light me-2" href="{% url 'email_holehe:search' %}">Buscar email</a>
-			<a class="text-light me-2" href="{% url 'phonesearch:search' %}">Buscar teléfono</a>
-			<a class="text-light me-2" href="{% url 'usersearch:search' %}">Buscar usuario</a>
-			<a class="text-light me-2" href="{% url 'exiftool:upload' %}">Metadata</a>
-			{% comment %} <a class="text-light" href="https://github.com/Nakajito/osint_hub" target="_blank" rel="noopener">GitHub</a> {% endcomment %}
-		</div>
-		</div>
-		<div class="row mt-2">
-			<div class="col-12">
-				<small class="text-muted">© Nakajito - {{ now|date:"Y" }}</small>
-			</div>
-		</div>
-	</div>
+<footer class="bg-dark text-light py-4 mt-auto border-top border-secondary">
+    <div class="container small">
+        <div class="row align-items-center">
+            <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
+                <a class="text-decoration-none text-light fw-bold" href="{% url 'home' %}">
+                    <i class="bi bi-incognito me-1"></i> OSINT Hub
+                </a>
+                <span class="text-muted d-block d-md-inline ms-md-2">&middot; Inteligencia de Fuentes Abiertas</span>
+            </div>
+
+            <div class="col-md-8 text-center text-md-end">
+                <div class="footer-links">
+                    <a class="link-light text-decoration-none me-3 opacity-75 hover-opacity-100" href="{% url 'email_holehe:search' %}">Email</a>
+                    <a class="link-light text-decoration-none me-3 opacity-75 hover-opacity-100" href="{% url 'phonesearch:search' %}">Teléfono</a>
+                    <a class="link-light text-decoration-none me-3 opacity-75 hover-opacity-100" href="{% url 'usersearch:search' %}">Usuario</a>
+                    <a class="link-light text-decoration-none me-3 opacity-75 hover-opacity-100" href="{% url 'exiftool:upload' %}">Metadata</a>
+                    <a class="link-light text-decoration-none opacity-75 hover-opacity-100" href="https://github.com/Nakajito/osint_hub" target="_blank" rel="noopener">
+                        <i class="bi bi-github"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12 text-center">
+                <hr class="border-secondary opacity-25">
+                <small class="text-muted">
+                    © {% now "Y" %} <span class="text-secondary">Nakajito</span> - Desarrollado para analistas de seguridad.
+                </small>
+            </div>
+        </div>
+    </div>
 </footer>
 
+<style>
+    /* Efecto sutil para los enlaces */
+    .hover-opacity-100:hover {
+        opacity: 1 !important;
+        text-decoration: underline !important;
+    }
+</style>

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block title %}HashTool — Generar y verificar{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <h3 class="card-title mb-3">Generar hash</h3>
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% bootstrap_form gen_form %}
+            <div class="d-flex gap-2">
+              <button class="btn btn-primary" type="submit" name="generate">Generar</button>
+              <a class="btn btn-outline-secondary" href="{% url 'HashTool:index' %}">Limpiar</a>
+            </div>
+          </form>
+
+          {% if gen_result %}
+            <hr>
+            <h5>Resultado</h5>
+            <pre class="p-3 bg-light border">{{ gen_result }}</pre>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h3 class="card-title mb-3">Verificar hash</h3>
+          <form action="{% url 'HashTool:verify' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% bootstrap_form verify_form %}
+            <div>
+              <button class="btn btn-success" type="submit">Verificar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

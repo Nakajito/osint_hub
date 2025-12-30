@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}HashTool — Resultado{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h3 class="card-title">Resultado de verificación</h3>
+          {% if computed %}
+            <div class="mb-3">
+              <label class="form-label">Hash calculado</label>
+              <pre class="p-3 bg-light border">{{ computed }}</pre>
+            </div>
+          {% endif %}
+          {% if expected %}
+            <div class="mb-3">
+              <label class="form-label">Hash esperado</label>
+              <pre class="p-3 bg-light border">{{ expected }}</pre>
+            </div>
+          {% endif %}
+          {% if match is not None %}
+            <div class="alert {% if match %}alert-success{% else %}alert-danger{% endif %}">
+              {% if match %}Los hashes coinciden.{% else %}Los hashes no coinciden.{% endif %}
+            </div>
+          {% endif %}
+
+          <a class="btn btn-secondary" href="{% url 'HashTool:index' %}">Volver</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

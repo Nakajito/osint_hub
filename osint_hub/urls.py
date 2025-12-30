@@ -11,6 +11,7 @@ urlpatterns = [
     path("exiftool/", include("ExifTool.urls")),
     path("phone/", include("PhoneSearch.urls")),
     path("user/", include("UsernameSearch.urls")),
+    path("hash/", include("HashTool.urls")),
 ]
 
 # Handlers de errores personalizados

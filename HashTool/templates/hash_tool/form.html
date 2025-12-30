@@ -1,45 +1,131 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load django_bootstrap5 %}
 
-{% block title %}HashTool — Generar y verificar{% endblock %}
+{% block title %}Herramienta Hash - OSINT Hub{% endblock %}
 
 {% block content %}
 <div class="container">
-  <div class="row justify-content-center">
-    <div class="col-lg-8">
-      <div class="card shadow-sm mb-4">
-        <div class="card-body">
-          <h3 class="card-title mb-3">Generar hash</h3>
-          <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {% bootstrap_form gen_form %}
-            <div class="d-flex gap-2">
-              <button class="btn btn-primary" type="submit" name="generate">Generar</button>
-              <a class="btn btn-outline-secondary" href="{% url 'HashTool:index' %}">Limpiar</a>
-            </div>
-          </form>
-
-          {% if gen_result %}
-            <hr>
-            <h5>Resultado</h5>
-            <pre class="p-3 bg-light border">{{ gen_result }}</pre>
-          {% endif %}
+    <div class="row py-4">
+        <div class="col-12 text-center">
+            <h1 class="display-5 fw-bold">
+                <i class="bi bi-fingerprint text-primary"></i> Herramienta Hash
+            </h1>
+            <p class="lead text-muted">
+                Genera huellas digitales criptográficas o verifica la integridad de tus archivos
+            </p>
         </div>
-      </div>
-
-      <div class="card shadow-sm">
-        <div class="card-body">
-          <h3 class="card-title mb-3">Verificar hash</h3>
-          <form action="{% url 'HashTool:verify' %}" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {% bootstrap_form verify_form %}
-            <div>
-              <button class="btn btn-success" type="submit">Verificar</button>
-            </div>
-          </form>
-        </div>
-      </div>
     </div>
-  </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            
+            <div class="card shadow-lg mb-5">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-file-earmark-lock"></i> Generar Hash
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        {% bootstrap_form gen_form layout='floating' %}
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" name="generate" class="btn btn-primary btn-lg">
+                                <i class="bi bi-gear-wide-connected"></i> Generar Hash
+                            </button>
+                        </div>
+                    </form>
+
+                    {% if gen_result %}
+                    <div class="mt-4 p-3 bg-light border rounded animate__animated animate__fadeIn">
+                        <label class="form-label fw-bold text-muted small text-uppercase">Hash Resultante:</label>
+                        <div class="input-group">
+                            <input type="text" id="hashResult" class="form-control font-monospace" value="{{ gen_result }}" readonly>
+                            <button class="btn btn-outline-primary" type="button" onclick="copyHash()">
+                                <i class="bi bi-clipboard"></i> Copiar
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card shadow-lg mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0 text-success">
+                        <i class="bi bi-shield-check"></i> Verificar Integridad
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <p class="text-muted small mb-3">Compara un archivo con un hash conocido para asegurar que no ha sido alterado.</p>
+                    
+                    <form action="{% url 'HashTool:verify' %}" method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        {% bootstrap_form verify_form layout='floating' %}
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-search"></i> Verificar Coincidencia
+                            </button>
+                            <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Volver al Inicio
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="bi bi-info-circle text-info"></i> ¿Qué es un Hash?
+                            </h6>
+                            <p class="card-text small text-muted">
+                                Un hash es una cadena alfanumérica única generada a partir de un archivo. Si el archivo cambia aunque sea un bit, el hash cambiará completamente.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="bi bi-shield-lock text-success"></i> Privacidad
+                            </h6>
+                            <p class="card-text small text-muted">
+                                El procesamiento se realiza de forma segura. Los archivos cargados para verificación son procesados temporalmente y no se almacenan permanentemente.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    {% include "includes/disclaimer.html" %}
 </div>
+
+<script>
+    function copyHash() {
+        const hashInput = document.getElementById('hashResult');
+        hashInput.select();
+        hashInput.setSelectionRange(0, 99999); // Para móviles
+        navigator.clipboard.writeText(hashInput.value).then(() => {
+             // Feedback visual opcional
+            const btn = document.querySelector('.btn-outline-primary');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check"></i> Copiado';
+            btn.classList.replace('btn-outline-primary', 'btn-success');
+            setTimeout(() => {
+                btn.innerHTML = originalHtml;
+                btn.classList.replace('btn-success', 'btn-outline-primary');
+            }, 2000);
+        });
+    }
+</script>
 {% endblock %}

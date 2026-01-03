@@ -599,3 +599,32 @@ footer a:hover {
     }
 }
 
+.hover-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Sección Acerca de - Tema Claro */
+.about-section {
+    background-color: #f8f9fa;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Sección Acerca de - Tema Oscuro */
+[data-bs-theme="dark"] .about-section {
+    background: linear-gradient(145deg, #0f1a2a 0%, #162332 100%);
+    border: 1px solid rgba(255, 101, 0, 0.15);
+}
+
+[data-bs-theme="dark"] .about-section h2,
+[data-bs-theme="dark"] .about-section h5 {
+    color: var(--primary-orange);
+}
+
+[data-bs-theme="dark"] .about-section .text-muted {
+    color: #b0b0b0 !important;
+}

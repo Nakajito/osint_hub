@@ -1,0 +1,154 @@
+<!-- Tarjeta: Email Search (Holehe) -->
+<div class="col-md-6 col-lg-4 mb-4">
+    <div class="card h-100 shadow-sm hover-card">
+        <div class="card-body text-center">
+            <div class="mb-3">
+                <i class="bi bi-envelope-at display-3 text-primary"></i>
+            </div>
+            <h5 class="card-title fw-bold">Email Search</h5>
+            <p class="card-text text-muted">
+                Verifica la presencia de un correo electrónico en múltiples plataformas 
+                y servicios usando Holehe.
+            </p>
+            <div class="d-grid">
+                <a href="{% url 'email_holehe:search' %}" class="btn btn-primary">
+                    <i class="bi bi-search"></i> Buscar Email
+                </a>
+            </div>
+        </div>
+        <div class="card-footer bg-transparent border-top-0">
+            <small class="text-muted">
+                <i class="bi bi-check-circle-fill text-success"></i> Disponible
+            </small>
+        </div>
+    </div>
+</div>
+
+<!-- Tarjeta: Metadata (ExifTool) -->
+<div class="col-md-6 col-lg-4 mb-4">
+    <div class="card h-100 shadow-sm hover-card">
+        <div class="card-body text-center">
+            <div class="mb-3">
+                <i class="bi bi-file-earmark-text display-3 text-primary"></i>
+            </div>
+            <h5 class="card-title fw-bold">Metadata</h5>
+            <p class="card-text text-muted">
+                Extrae metadatos (EXIF, XMP, IPTC) de imágenes y documentos usando ExifTool.
+            </p>
+            <div class="d-grid">
+                <button class="btn btn-secondary" disabled>
+                    <i class="bi bi-hourglass-split"></i> En desarrollo
+                </button>
+            </div>
+        </div>
+        <div class="card-footer bg-transparent border-top-0">
+            <small class="text-muted">
+                <i class="bi bi-clock-fill"></i> En desarrollo
+            </small>
+        </div>
+    </div>
+</div>
+
+<!-- Tarjeta: Username Search -->
+<div class="col-md-6 col-lg-4 mb-4">
+    <div class="card h-100 shadow-sm hover-card">
+        <div class="card-body text-center">
+            <div class="mb-3">
+                <i class="bi bi-person-badge display-3 text-primary"></i>
+            </div>
+            <h5 class="card-title fw-bold">Username Search</h5>
+            <p class="card-text text-muted">
+                Busca nombres de usuario a través de diferentes redes sociales 
+                y plataformas online usando Sherlock.
+            </p>
+            <div class="d-grid">
+                <a href="{% url 'usersearch:search' %}" class="btn btn-primary">
+                    <i class="bi bi-search"></i> Buscar usuario
+                </a>
+            </div>
+        </div>
+        <div class="card-footer bg-transparent border-top-0">
+            <small class="text-muted">
+                <i class="bi bi-check-circle-fill text-success"></i> Disponible
+            </small>
+        </div>
+    </div>
+</div>
+
+<!-- Tarjeta: Phone Number Search -->
+<div class="col-md-6 col-lg-4 mb-4">
+    <div class="card h-100 shadow-sm hover-card">
+        <div class="card-body text-center">
+            <div class="mb-3">
+                <i class="bi bi-telephone display-3 text-primary"></i>
+            </div>
+            <h5 class="card-title fw-bold">Phone Search</h5>
+            <p class="card-text text-muted">
+                Verifica si un número de teléfono está registrado en plataformas como 
+                Instagram, Snapchat, Amazon usando Ignorant.
+            </p>
+            <div class="d-grid">
+                <a href="{% url 'phonesearch:search' %}" class="btn btn-primary">
+                    <i class="bi bi-search"></i> Buscar teléfono
+                </a>
+            </div>
+        </div>
+        <div class="card-footer bg-transparent border-top-0">
+            <small class="text-muted">
+                <i class="bi bi-check-circle-fill text-success"></i> Disponible
+            </small>
+        </div>
+    </div>
+</div>
+
+<!-- Tarjeta: Hash -->
+<div class="col-md-6 col-lg-4 mb-4">
+    <div class="card h-100 shadow-sm hover-card">
+        <div class="card-body text-center">
+            <div class="mb-3">
+                <i class="bi bi-fingerprint display-3 text-primary"></i>
+            </div>
+            <h5 class="card-title fw-bold">Hash</h5>
+            <p class="card-text text-muted">
+                Genera huellas digitales criptográficas o verifica la integridad de tus archivos
+            </p>
+            </p>
+            <div class="d-grid">
+                <a href="{% url 'HashTool:index' %}" class="btn btn-primary">
+                    <i class="bi bi-fingerprint"></i> Generar hash
+                </a>
+            </div>
+        </div>
+        <div class="card-footer bg-transparent border-top-0">
+            <small class="text-muted">
+                <i class="bi bi-check-circle-fill text-success"></i> Disponible
+            </small>
+        </div>
+    </div>
+</div>
+
+    <!-- Tarjeta: Geo IP -->
+<div class="col-md-6 col-lg-4 mb-4">
+    <div class="card h-100 shadow-sm hover-card">
+        <div class="card-body text-center">
+            <div class="mb-3">
+                <i class="bi bi-geo-alt display-3 text-primary"></i>
+            </div>
+            <h5 class="card-title fw-bold">Geolocalización IP</h5>
+            <p class="card-text text-muted">
+                Consulta la geolocalización de una dirección IP usando ip.guide
+            </p>
+            </p>
+            <div class="d-grid">
+                    <button class="btn btn-secondary" disabled>
+                    <i class="bi bi-hourglass-split"></i> En desarrollo
+                </button>
+            </div>
+        </div>
+        <div class="card-footer bg-transparent border-top-0">
+            <small class="text-muted">
+                <i class="bi bi-clock-fill"></i> En desarrollo
+            </small>
+        </div>
+    </div>
+</div>

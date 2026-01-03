@@ -71,29 +71,95 @@ def upload_file(request):
                     else:
                         v = val
                     metadata[tag_name] = v
-        except Exception:
-            # Fallback a subprocess exiftool si está disponible en el sistema
-            try:
-                cmd = f"exiftool -j {shlex.quote(tmp_path)}"
-                proc = subprocess.run(
-                    cmd, shell=True, capture_output=True, text=True, timeout=30
-                )
-                if proc.returncode == 0 and proc.stdout:
-                    import json
 
-                    parsed = json.loads(proc.stdout)
-                    if isinstance(parsed, list) and parsed:
-                        metadata = parsed[0]
-                    else:
-                        metadata = {}
-                else:
-                    metadata = {}
-                    # Log stderr for debugging
+        except Exception as piexif_error:
+            # Fallback a subprocess exiftool si está disponible en el sistema
+            metadata = {}
+            logging.getLogger(__name__).debug(
+                "Piexif falló, intentando ExifTool: %s", str(piexif_error)
+            )
+
+            try:
+                # Rutas posibles de ExifTool
+                exiftool_paths = [
+                    "/usr/bin/exiftool",  # Ubuntu/Debian estándar
+                    "/usr/local/bin/exiftool",  # Instalación manual
+                    "/opt/homebrew/bin/exiftool",  # macOS
+                ]
+
+                exiftool_path = None
+                for path in exiftool_paths:
+                    if os.path.exists(path) and os.access(path, os.X_OK):
+                        exiftool_path = path
+                        break
+
+                # Si no se encontró en rutas fijas, buscar en PATH
+                if not exiftool_path:
+                    try:
+                        result = subprocess.run(
+                            ["which", "exiftool"],
+                            capture_output=True,
+                            text=True,
+                            timeout=5,
+                        )
+                        if result.returncode == 0:
+                            exiftool_path = result.stdout.strip()
+                    except Exception:
+                        pass
+
+                if not exiftool_path:
                     logging.getLogger(__name__).warning(
-                        "exiftool returned non-zero: %s", proc.stderr
+                        "ExifTool no encontrado en el sistema"
                     )
-            except Exception:
-                metadata = {}
+                    # Continuar sin metadata
+                    metadata = {}
+                else:
+                    # Ejecutar exiftool
+                    logging.getLogger(__name__).debug(
+                        "Ejecutando ExifTool desde: %s", exiftool_path
+                    )
+
+                    proc = subprocess.run(
+                        [exiftool_path, "-json", "-q", tmp_path],
+                        capture_output=True,
+                        text=True,
+                        timeout=30,
+                        check=False,
+                    )
+
+                    if proc.returncode == 0 and proc.stdout:
+                        import json
+
+                        try:
+                            parsed = json.loads(proc.stdout)
+                            if isinstance(parsed, list) and parsed:
+                                metadata = parsed[0]
+                                logging.getLogger(__name__).info(
+                                    "ExifTool extrajo %s metadatos de %s",
+                                    len(metadata),
+                                    uploaded.name,
+                                )
+                        except json.JSONDecodeError as e:
+                            logging.getLogger(__name__).error(
+                                "Error parsing ExifTool JSON: %s. Output: %s",
+                                e,
+                                proc.stdout[:200],
+                            )
+                    else:
+                        logging.getLogger(__name__).warning(
+                            "ExifTool falló. Code: %s, Error: %s",
+                            proc.returncode,
+                            proc.stderr[:200] if proc.stderr else "Sin error",
+                        )
+
+            except subprocess.TimeoutExpired:
+                logging.getLogger(__name__).error(
+                    "ExifTool timeout después de 30 segundos"
+                )
+            except Exception as e:
+                logging.getLogger(__name__).error(
+                    "Error inesperado con ExifTool: %s", str(e)
+                )
 
         # Si no se extrajeron metadatos, avisar al usuario con sugerencias
         if not metadata:

@@ -66,7 +66,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "osint_hub.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
@@ -138,9 +137,9 @@ SEARCH_RESULTS_DIR = os.environ.get(
 
 # Configuración de seguridad para producción
 if not DEBUG:
-    SECURE_SSL_REDIRECT = False  # Cambiar a True si se usa HTTPS
-    SESSION_COOKIE_SECURE = False  # Cambiar a True si se usa HTTPS
-    CSRF_COOKIE_SECURE = False  # Cambiar a True si se usa HTTPS
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = "DENY"

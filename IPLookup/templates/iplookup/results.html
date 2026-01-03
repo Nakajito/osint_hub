@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Resultados IP - OSINT Hub{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <style>
+    #ip-map { border-radius: 6px; }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row py-4">
+    <div class="col-12 text-center">
+      <h1 class="display-5 fw-bold"><i class="bi bi-geo-alt"></i> Resultados</h1>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body p-4">
+          {% if data %}
+
+          <h5 class="mb-3">IP: <span class="font-monospace">{{ data.ip }}</span></h5>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h6 class="card-title">Ubicación</h6>
+                  <p class="mb-1"><strong>País:</strong> {{ data.location.country|default:"-" }}</p>
+                  <p class="mb-1"><strong>Ciudad:</strong> {{ data.location.city|default:"-" }}</p>
+                  <p class="mb-1"><strong>Zona horaria:</strong> {{ data.location.timezone|default:"-" }}</p>
+                  <p class="mb-0"><strong>Coordenadas:</strong>
+                    {% if data.location.latitude and data.location.longitude %}
+                      {{ data.location.latitude }}, {{ data.location.longitude }}
+                    {% else %}
+                      -
+                    {% endif %}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h6 class="card-title">Autonomous System (ASN)</h6>
+                  <p class="mb-1"><strong>ASN:</strong> {{ data.asn.asn|default:"-" }}</p>
+                  <p class="mb-1"><strong>Nombre:</strong> {{ data.asn.name|default:"-" }}</p>
+                  <p class="mb-1"><strong>Organización:</strong> {{ data.asn.organization|default:"-" }}</p>
+                  <p class="mb-0"><strong>RIR / País:</strong> {{ data.asn.rir|default:"-" }} / {{ data.asn.country|default:"-" }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-md-6 mb-3">
+              <div class="card">
+                <div class="card-body">
+                  <h6 class="card-title">Red</h6>
+                  <p class="mb-1"><strong>CIDR:</strong> {{ data.network.cidr|default:"-" }}</p>
+                  {% if data.network.hosts %}
+                    <p class="mb-0"><strong>Hosts:</strong> {{ data.network.hosts.start }} — {{ data.network.hosts.end }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <div class="card">
+                <div class="card-body">
+                  <h6 class="card-title">Mapa</h6>
+                  {% if data.location.latitude and data.location.longitude %}
+                    <div id="ip-map" style="height:300px;"></div>
+                  {% else %}
+                    <p class="text-muted small mb-0">No hay coordenadas disponibles para mostrar el mapa.</p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {% else %}
+            <p class="text-muted">No hay resultados para mostrar.</p>
+          {% endif %}
+
+          <div class="mt-3">
+            <a href="{% url 'iplookup:search' %}" class="btn btn-outline-primary">Nueva búsqueda</a>
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary">Inicio</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% include 'includes/disclaimer.html' %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script>
+    (function(){
+      const lat = {{ data.location.latitude|default:'null' }};
+      const lon = {{ data.location.longitude|default:'null' }};
+      if (lat !== null && lon !== null) {
+        const map = L.map('ip-map').setView([lat, lon], 8);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        const marker = L.marker([lat, lon]).addTo(map);
+
+        const city = "{{ data.location.city|default:''|escapejs }}";
+        const country = "{{ data.location.country|default:''|escapejs }}";
+        const timezone = "{{ data.location.timezone|default:''|escapejs }}";
+        const asn = "{{ data.asn.asn|default:''|escapejs }}";
+        const asnname = "{{ data.asn.name|default:''|escapejs }}";
+
+        let popup = '<div style="min-width:180px">';
+        if (city || country) popup += '<strong>' + [city, country].filter(Boolean).join(', ') + '</strong><br/>';
+        if (timezone) popup += 'Zona horaria: ' + timezone + '<br/>';
+        if (asn) popup += 'ASN: ' + asn + (asnname ? (' — ' + asnname) : '') + '<br/>';
+        popup += 'Coordenadas: ' + lat + ', ' + lon;
+        popup += '</div>';
+
+        marker.bindPopup(popup);
+      }
+    })();
+  </script>
+{% endblock %}

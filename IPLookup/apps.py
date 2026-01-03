@@ -1,6 +1,7 @@
 from django.apps import AppConfig
 
 
-class EmailHoleheConfig(AppConfig):
+class IPLookupConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "email_holehe"
+    name = "IPLookup"
+    verbose_name = "IP Lookup"

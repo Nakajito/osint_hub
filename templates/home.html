@@ -140,6 +140,7 @@
                 </div>
             </div>
         </div>
+        
         <!-- Tarjeta: Hash -->
         <div class="col-md-6 col-lg-4 mb-4">
             <div class="card h-100 shadow-sm hover-card">
@@ -154,7 +155,33 @@
                     </p>
                     <div class="d-grid">
                         <a href="{% url 'HashTool:index' %}" class="btn btn-primary">
-                            <i class="bi bi-search"></i> Generar hash
+                            <i class="bi bi-fingerprint"></i> Generar hash
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <small class="text-muted">
+                        <i class="bi bi-check-circle-fill text-success"></i> Disponible
+                    </small>
+                </div>
+            </div>
+        </div>
+    
+            <!-- Tarjeta: Hash -->
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm hover-card">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-geo-alt display-3 text-primary"></i>
+                    </div>
+                    <h5 class="card-title fw-bold">Geolocalización IP</h5>
+                    <p class="card-text text-muted">
+                        Consulta la geolocalización de una dirección IP usando ip.guide
+                    </p>
+                    </p>
+                    <div class="d-grid">
+                        <a href="{% url 'iplookup:search' %}" class="btn btn-primary">
+                            <i class="bi bi-geo-alt"></i> Buscar IP
                         </a>
                     </div>
                 </div>
@@ -167,6 +194,10 @@
         </div>
     </div>
 
+    
+    </div>
+    
+    
     <!-- Sección: Acerca de -->
     <div class="row py-5 about-section rounded" id="about">
         <div class="col-12 text-center mb-4">

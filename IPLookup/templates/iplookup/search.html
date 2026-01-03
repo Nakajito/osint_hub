@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block title %}Búsqueda IP - OSINT Hub{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row py-4">
+    <div class="col-12 text-center">
+      <h1 class="display-5 fw-bold"><i class="bi bi-globe"></i> Búsqueda de IP</h1>
+      <p class="lead text-muted">Consulta la geolocalización de una dirección IP usando ip.guide</p>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body p-4">
+          <form method="post" novalidate>
+            {% csrf_token %}
+            {% bootstrap_form form layout='floating' %}
+            <div class="d-grid gap-2 mt-3">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <i class="bi bi-search"></i> Buscar IP
+              </button>
+              <a href="{% url 'home' %}" class="btn btn-outline-secondary">Volver</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% include 'includes/disclaimer.html' %}
+</div>
+{% endblock %}

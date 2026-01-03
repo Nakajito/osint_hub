@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "PhoneSearch",
     "UsernameSearch",
     "HashTool",
+    "IPLookup",
 ]
 
 MIDDLEWARE = [

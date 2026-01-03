@@ -36,14 +36,14 @@
                 Extrae metadatos (EXIF, XMP, IPTC) de imágenes y documentos usando ExifTool.
             </p>
             <div class="d-grid">
-                <button class="btn btn-secondary" disabled>
-                    <i class="bi bi-hourglass-split"></i> En desarrollo
-                </button>
+                <a href="{% url 'exiftool:upload' %}" class="btn btn-primary">
+                    <i class="bi bi-search"></i> Buscar Metadata
+                </a>
             </div>
         </div>
         <div class="card-footer bg-transparent border-top-0">
             <small class="text-muted">
-                <i class="bi bi-clock-fill"></i> En desarrollo
+                <i class="bi bi-check-circle-fill text-success"></i> Disponible
             </small>
         </div>
     </div>
@@ -140,14 +140,14 @@
             </p>
             </p>
             <div class="d-grid">
-                    <button class="btn btn-secondary" disabled>
-                    <i class="bi bi-hourglass-split"></i> En desarrollo
-                </button>
+                <a href="{% url 'iplookup:search' %}" class="btn btn-primary">
+                    <i class="bi bi-geo-alt"></i> Buscar IP
+                </a>
             </div>
         </div>
         <div class="card-footer bg-transparent border-top-0">
             <small class="text-muted">
-                <i class="bi bi-clock-fill"></i> En desarrollo
+                <i class="bi bi-check-circle-fill text-success"></i> Disponible
             </small>
         </div>
     </div>

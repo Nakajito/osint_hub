@@ -138,9 +138,9 @@ SEARCH_RESULTS_DIR = os.environ.get(
 
 # Configuración de seguridad para producción
 if not DEBUG:
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = False  # Cambiar a True si se usa HTTPS
+    SESSION_COOKIE_SECURE = False  # Cambiar a True si se usa HTTPS
+    CSRF_COOKIE_SECURE = False  # Cambiar a True si se usa HTTPS
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = "DENY"

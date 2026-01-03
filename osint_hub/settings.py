@@ -153,3 +153,9 @@ CSRF_TRUSTED_ORIGINS = config(
     default="https://*.pythonanywhere.com,https://*.onrender.com",
     cast=lambda v: [s.strip() for s in v.split(",")] if v else [],
 )
+
+# Configurar path a ExifTool
+EXIFTOOL_PATH = "/usr/bin/exiftool"  # Ruta por defecto en Ubuntu
+
+if not os.path.exists(EXIFTOOL_PATH):
+    EXIFTOOL_PATH = "/usr/local/bin/exiftool"  # Ruta alternativa

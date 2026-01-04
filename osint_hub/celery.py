@@ -1,5 +1,5 @@
 import os
-from osint_hub.celery import Celery
+from celery import Celery
 
 # Set the default Django settings module
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "osint_hub.settings")

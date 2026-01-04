@@ -16,7 +16,7 @@ DEBUG = config("DEBUG", default=True, cast=bool)
 # ALLOWED_HOSTS - Compatible con PythonAnywhere y Render
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS",
-    default="localhost,127.0.0.1,testserver,.pythonanywhere.com,.onrender.com",
+    default="localhost,127.0.0.1,testserver,.pythonanywhere.com, 159.65.100.120",
     cast=lambda v: [s.strip() for s in v.split(",")],
 )
 
@@ -173,6 +173,12 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60  # 30 minutos
 CELERY_RESULT_EXPIRES = 3600  # 1 hora
 CELERY_CACHE_BACKEND = "default"
+
+# En desarrollo, permitir que Celery ejecute tareas de forma síncrona
+# para evitar depender de un broker (útil para debugging local).
+# if DEBUG:
+# CELERY_TASK_ALWAYS_EAGER = True
+# CELERY_TASK_EAGER_PROPAGATES = True
 
 # Opcional: para periodic tasks
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"

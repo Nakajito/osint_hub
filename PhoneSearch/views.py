@@ -15,8 +15,8 @@ def search_phone(request):
     if request.method == "POST":
         form = PhoneSearchForm(request.POST)
         if form.is_valid():
-            phone = form.cleaned_data.get("phone")
-            country_code = form.cleaned_data.get("country_code", "")
+            phone = form.phone
+            country_code = form.country_code
 
             try:
                 # Iniciar task asíncrono con Celery

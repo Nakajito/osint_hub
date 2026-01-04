@@ -1,5 +1,4 @@
 import logging
-import trio
 import httpx
 import importlib
 import pkgutil

@@ -81,43 +81,22 @@
             </table>
           </div>
 
-<<<<<<< HEAD
-          {% endif %}
-
-          <!-- Estado siempre visible -->
-          <div class="alert {% if results %}{% if found_count > 0 %}alert-info{% else %}alert-success{% endif %}{% else %}alert-warning{% endif %}">
-            {% if results %}
-              {% if found_count > 0 %}
-                <i class="bi bi-info-circle"></i>
-                Se encontró el número en <strong>{{ found_count }}</strong> plataforma(s). Puedes hacer clic en los dominios para visitar los sitios.
-              {% else %}
-                <i class="bi bi-check-circle"></i>
-                El número no fue encontrado en las plataformas buscadas.
-              {% endif %}
-            {% else %}
-              <i class="bi bi-exclamation-triangle-fill"></i>
-              No se encontraron resultados o hubo un error durante la búsqueda.
-            {% endif %}
-          </div>
-=======
           {% if found_count > 0 %}
-          <div class="alert alert-info alert-permanent">
+          <div class="alert alert-info mt-3">
             <i class="bi bi-info-circle"></i> 
             Se encontró el número en <strong>{{ found_count }}</strong> plataforma(s). Puedes hacer clic en los dominios para visitar los sitios.
           </div>
           {% else %}
-          <div class="alert alert-success alert-permanent">
+          <div class="alert alert-success mt-3">
             <i class="bi bi-check-circle"></i> 
             El número no fue encontrado en las plataformas buscadas.
           </div>
           {% endif %}
 
           {% else %}
-          <div class="alert alert-warning alert-permanent">No se encontraron resultados o hubo un error durante la búsqueda.</div>
+          <div class="alert alert-warning mt-3">No se encontraron resultados o hubo un error durante la búsqueda.</div>
           {% endif %}
->>>>>>> dev
-
-        </div>
+          </div>
       </div>
     </div>
   </div>

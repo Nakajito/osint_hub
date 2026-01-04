@@ -159,3 +159,19 @@ EXIFTOOL_PATH = "/usr/bin/exiftool"  # Ruta por defecto en Ubuntu
 
 if not os.path.exists(EXIFTOOL_PATH):
     EXIFTOOL_PATH = "/usr/local/bin/exiftool"  # Ruta alternativa
+
+
+# Celery Configuration
+CELERY_BROKER_URL = "redis://localhost:6379/0"
+CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "UTC"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60  # 30 minutos
+CELERY_RESULT_EXPIRES = 3600  # 1 hora
+CELERY_CACHE_BACKEND = "default"
+
+# Opcional: para periodic tasks
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"

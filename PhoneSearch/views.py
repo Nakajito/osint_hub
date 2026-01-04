@@ -1,134 +1,139 @@
-import trio
-import httpx
 import logging
-import importlib
-import pkgutil
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
+from django.http import JsonResponse
 from .forms import PhoneSearchForm
+from .tasks import search_phone_task, test_celery
+from celery.result import AsyncResult
 
 logger = logging.getLogger(__name__)
 
 
-def import_ignorant_modules():
-    """Import all ignorant modules dynamically."""
-
-    def import_submodules(package, recursive=True):
-        if isinstance(package, str):
-            package = importlib.import_module(package)
-        results = {}
-        for loader, name, is_pkg in pkgutil.walk_packages(package.__path__):
-            full_name = package.__name__ + "." + name
-            results[full_name] = importlib.import_module(full_name)
-            if recursive and is_pkg:
-                results.update(import_submodules(full_name))
-        return results
-
-    modules = import_submodules("ignorant.modules")
-
-    # Extract functions
-    websites = []
-    for module_name in modules:
-        if len(module_name.split(".")) > 3:
-            modu = modules[module_name]
-            site = module_name.split(".")[-1]
-            if site in modu.__dict__:
-                websites.append(modu.__dict__[site])
-
-    return websites
-
-
-async def search_phone_async(phone, country_code):
-    """Execute phone search using ignorant modules asynchronously."""
-    websites = import_ignorant_modules()
-    results = []
-
-    try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            for website in websites:
-                try:
-                    await website(phone, country_code, client, results)
-                except Exception as e:
-                    logger.warning(f"Error with {website.__name__}: {e}")
-                    # Add error entry
-                    results.append(
-                        {
-                            "name": website.__name__,
-                            "domain": f"{website.__name__}.com",
-                            "rateLimit": True,
-                            "exists": False,
-                        }
-                    )
-    except Exception as e:
-        logger.error(f"Error during phone search: {e}")
-        raise
-
-    return results
-
-
 def search_phone(request):
-    """Display phone search form and process searches."""
+    """Mostrar formulario de búsqueda y procesar búsquedas."""
     if request.method == "POST":
         form = PhoneSearchForm(request.POST)
         if form.is_valid():
-            # Extract parsed values from form
-            phone = form.phone
-            country_code = form.country_code
+            phone = form.cleaned_data.get("phone")
+            country_code = form.cleaned_data.get("country_code", "")
 
             try:
-                # Run async search
-                results = trio.run(search_phone_async, phone, country_code)
+                # Iniciar task asíncrono con Celery
+                logger.info(f"Iniciando Celery task para: {phone}")
+                task = search_phone_task.delay(phone, country_code)
 
-                # Store in session
-                request.session["phone_search_results"] = results
+                # Guardar información en sesión
+                request.session["phone_search_task_id"] = task.id
                 request.session["phone_search_phone"] = phone
                 request.session["phone_search_country"] = country_code
+                request.session["phone_search_status"] = "processing"
 
-                return redirect(reverse("phonesearch:results"))
+                messages.info(
+                    request,
+                    "✅ Búsqueda iniciada. Los resultados estarán disponibles en unos momentos. "
+                    "Puedes continuar navegando y volver más tarde.",
+                )
+                return redirect(reverse("phonesearch:check_results"))
+
             except Exception as e:
-                logger.exception(f"Error searching phone {phone}: {e}")
+                logger.exception(f"Error iniciando búsqueda: {e}")
                 messages.error(
-                    request, f"Error durante la búsqueda: {str(e)}. Intenta nuevamente."
+                    request,
+                    "❌ Error al iniciar la búsqueda. Por favor, intenta nuevamente.",
                 )
                 return redirect(reverse("phonesearch:search"))
         else:
             for field, errors in form.errors.items():
                 for error in errors:
-                    messages.error(request, f"{error}")
+                    messages.error(request, f"{field}: {error}")
     else:
         form = PhoneSearchForm()
 
     return render(request, "phonesearch/search.html", {"form": form})
 
 
+def check_results(request):
+    """Verificar si los resultados están listos."""
+    task_id = request.session.get("phone_search_task_id")
+    phone = request.session.get("phone_search_phone", "No especificado")
+    country = request.session.get("phone_search_country", "No especificado")
+
+    if not task_id:
+        messages.error(request, "No hay búsqueda en proceso.")
+        return redirect(reverse("phonesearch:search"))
+
+    # Verificar estado de la task
+    task_result = AsyncResult(task_id)
+
+    context = {
+        "phone": phone,
+        "country": country,
+        "task_id": task_id,
+        "task_status": task_result.status,
+    }
+
+    if task_result.ready():
+        if task_result.successful():
+            results = task_result.result
+            request.session["phone_search_results"] = results
+            request.session["phone_search_status"] = "completed"
+            messages.success(request, "✅ Búsqueda completada exitosamente!")
+            return redirect(reverse("phonesearch:results"))
+        else:
+            # Task falló
+            error_msg = (
+                str(task_result.result) if task_result.result else "Error desconocido"
+            )
+            messages.error(request, f"❌ La búsqueda falló: {error_msg}")
+            return redirect(reverse("phonesearch:search"))
+
+    # Si es AJAX request, devolver JSON
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        return JsonResponse(
+            {
+                "status": task_result.status,
+                "ready": task_result.ready(),
+                "phone": phone,
+            }
+        )
+
+    # Mostrar página de carga
+    return render(request, "phonesearch/loading.html", context)
+
+
 def show_results(request):
-    """Display phone search results stored in session."""
+    """Mostrar resultados de búsqueda almacenados en sesión."""
     results = request.session.get("phone_search_results", [])
-    phone = request.session.get("phone_search_phone", "-")
-    country = request.session.get("phone_search_country", "-")
+    phone = request.session.get("phone_search_phone", "No especificado")
+    country = request.session.get("phone_search_country", "No especificado")
 
-    logger.info(
-        f"show_results called - results: {len(results)}, phone: {phone}, country: {country}"
+    logger.info(f"Mostrando resultados para {phone}: {len(results)} entradas")
+
+    # Parsear resultados
+    found_count = sum(
+        1 for r in results if isinstance(r, dict) and r.get("exists") == True
     )
+    rate_limited = any(r.get("rateLimit") for r in results if isinstance(r, dict))
 
-    # Parse results for template display
-    found_count = sum(1 for r in results if r.get("exists"))
-    rate_limited = any(r.get("rateLimit") for r in results)
+    context = {
+        "results": results,
+        "phone": phone,
+        "country": country,
+        "found_count": found_count,
+        "rate_limited": rate_limited,
+        "total_count": len(results),
+    }
 
-    # Ensure results is not None
-    if not results:
-        logger.warning("No results found in session")
-        messages.warning(request, "No se encontraron resultados en la sesión.")
+    return render(request, "phonesearch/results.html", context)
 
-    return render(
-        request,
-        "phonesearch/results.html",
-        {
-            "results": results,
-            "phone": phone,
-            "country": country,
-            "found_count": found_count,
-            "rate_limited": rate_limited,
-        },
-    )
+
+def test_celery_view(request):
+    """Vista para probar que Celery funciona."""
+    try:
+        task = test_celery.delay()
+        messages.success(request, f"✅ Task de prueba iniciada. ID: {task.id}")
+        return redirect(reverse("phonesearch:search"))
+    except Exception as e:
+        messages.error(request, f"❌ Error: {str(e)}")
+        return redirect(reverse("phonesearch:search"))

@@ -25,7 +25,7 @@ def _run_sherlock(username, timeout=60):
     This tries `python -m sherlock` first and falls back to a `sherlock` executable
     if available. Supports parsing JSON output or a simple CLI-style fallback.
     """
-    cmd_mod = [sys.executable, "-m", "sherlock", username, "--timeout", "10"]
+    cmd_mod = [sys.executable, "-m", "sherlock", username, "--timeout", "60"]
     stdout = ""
     stderr = ""
     try:
@@ -216,7 +216,7 @@ def search_username(request):
                     )
 
                 # Ensure any legacy artifact created in the project root with the
-                # username (e.g. 'nakajito.txt') is removed so we don't persist
+                # username (e.g. 'user.txt') is removed so we don't persist
                 # sensitive output into the repo root.
                 try:
                     project_base = getattr(settings, "BASE_DIR", None)

@@ -19,24 +19,46 @@ from .forms import UsernameSearchForm
 logger = logging.getLogger(__name__)
 
 
-def _run_sherlock(username, timeout=60):
+def _run_sherlock(username, timeout=300):
     """Run Sherlock and return a list of result dicts: {'site','url','exists'}.
 
     This tries `python -m sherlock` first and falls back to a `sherlock` executable
     if available. Supports parsing JSON output or a simple CLI-style fallback.
     """
-    cmd_mod = [sys.executable, "-m", "sherlock", username, "--timeout", "60"]
+    cmd_mod = [
+        sys.executable,
+        "-m",
+        "sherlock",
+        username,
+        "--timeout",
+        "15",
+        "--no-color",
+    ]
+
     stdout = ""
     stderr = ""
+
     try:
+        # Ejecutamos con un timeout largo para dar tiempo a todos los sitios
         proc = subprocess.run(cmd_mod, capture_output=True, text=True, timeout=timeout)
         stdout = proc.stdout or ""
         stderr = proc.stderr or ""
-    except Exception:
-        stdout = ""
-        stderr = ""
+    except subprocess.TimeoutExpired:
+        logger.error("Sherlock Timeout: El proceso tardó más de 300s")
+        # Devolvemos lo que haya encontrado hasta el momento o un error
+        return [
+            {
+                "site": "Timeout",
+                "url": None,
+                "exists": False,
+                "error": "La búsqueda tardó demasiado",
+            }
+        ]
+    except Exception as e:
+        logger.error(f"Error crítico ejecutando sherlock: {e}")
+        return []
 
-    # fallback to sherlock console script if module did not produce output
+    # Fallback: Si el módulo falla, intentamos buscar el binario 'sherlock'
     if not stdout:
         sherlock_exe = shutil.which("sherlock")
         if not sherlock_exe:
@@ -46,59 +68,48 @@ def _run_sherlock(username, timeout=60):
                 sherlock_exe = possible
 
         if sherlock_exe:
-            cmd = [sherlock_exe, username, "--timeout", "10", "--print-all"]
+            cmd = [
+                sherlock_exe,
+                username,
+                "--timeout",
+                "15",
+                "--print-all",
+                "--no-color",
+            ]
             try:
                 proc = subprocess.run(
                     cmd, capture_output=True, text=True, timeout=timeout
                 )
                 stdout = proc.stdout or ""
-                stderr = proc.stderr or ""
             except Exception as e:
-                logger.exception("Error running sherlock executable: %s", e)
-                stderr = str(e)
+                logger.error(f"Error fallback sherlock: {e}")
 
     results = []
-    # Try JSON parse
-    try:
-        data = json.loads(stdout)
-        for site, info in data.items():
-            if isinstance(info, dict):
-                results.append(
-                    {
-                        "site": site,
-                        "url": info.get("url"),
-                        "exists": bool(info.get("exists")),
-                    }
-                )
-            else:
-                results.append({"site": site, "url": None, "exists": False})
-        return results
-    except Exception:
-        # not JSON, fall through to text parsing
-        pass
 
-    # Simple text parsing fallback
+    # Intento 1: Parseo de Texto (Más robusto para VPS)
+    # Buscamos líneas que empiecen con "[+]" que indica éxito en Sherlock
     for line in (stdout or "").splitlines():
         line = line.strip()
-        if not line:
-            continue
-        m = re.match(r"^[\[\+\-\s]*\]?\s*([^:]+):\s*(.*)$", line)
-        if m:
-            site = m.group(1).strip()
-            rest = m.group(2).strip()
-            is_url = rest.startswith("http://") or rest.startswith("https://")
-            exists = is_url or (
-                not rest.lower().startswith("not found")
-                and not rest.lower().startswith("error")
-                and rest != ""
-            )
-            url = rest if is_url else None
-            results.append({"site": site, "url": url, "exists": bool(exists)})
 
-    if not results and (stderr or stdout):
-        err_text = stderr or stdout
+        # Ejemplo de línea exitosa: "[+] Wikipedia: https://en.wikipedia.org/wiki/User:user"
+        # La regex busca: Que empiece con [+], capture el nombre, y capture la URL
+        match = re.search(r"\[\+\]\s+([^:]+):\s+(http.*)$", line)
+
+        if match:
+            site = match.group(1).strip()
+            url = match.group(2).strip()
+            results.append({"site": site, "url": url, "exists": True})
+
+    # Si no encontramos nada con regex, intentamos ver si hubo error
+    if not results and "Blocked" in stdout:
+        # Opcional: Agregar un resultado falso para avisar al usuario
         results.append(
-            {"site": "sherlock", "url": None, "exists": False, "error": err_text}
+            {
+                "site": "Aviso",
+                "url": None,
+                "exists": False,
+                "error": "IP Bloqueada por varios sitios",
+            }
         )
 
     return results

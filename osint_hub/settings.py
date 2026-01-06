@@ -149,8 +149,12 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
 
-# CSRF Trusted Origins (para Render.com y PythonAnywhere)
-CSRF_TRUSTED_ORIGINS = ["https://dabg.dev", "https://www.dabg.dev"]
+# Configuración de CSRF_TRUSTED_ORIGINS desde variable de entorno
+csrf_trusted_origins_str = os.getenv("CSRF_TRUSTED_ORIGINS", "")
+if csrf_trusted_origins_str:
+    CSRF_TRUSTED_ORIGINS = [url.strip() for url in csrf_trusted_origins_str.split(",")]
+else:
+    CSRF_TRUSTED_ORIGINS = []
 
 # 2. Configura los proxies de seguridad (necesario para Nginx/DigitalOcean)
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

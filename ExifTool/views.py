@@ -1,8 +1,8 @@
 import os
 import tempfile
-import shlex
 import subprocess
 import logging
+import json
 from django.shortcuts import render, redirect
 from django.conf import settings
 from django.urls import reverse
@@ -19,6 +19,28 @@ ALLOWED_CONTENT_TYPES = [
 ]
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 
+logger = logging.getLogger(__name__)
+
+
+def clean_metadata_for_session(metadata):
+    """
+    Limpia el diccionario de metadatos para evitar que la sesión de Django
+    explote por tamaño excesivo. Elimina valores muy largos.
+    """
+    clean_data = {}
+    if not isinstance(metadata, dict):
+        return {}
+
+    for k, v in metadata.items():
+        # Convertir a string para verificar longitud
+        str_val = str(v)
+        # Si el valor tiene más de 500 caracteres, lo truncamos o ignoramos
+        if len(str_val) > 500:
+            clean_data[k] = str_val[:100] + "... (truncado por tamaño)"
+        else:
+            clean_data[k] = v
+    return clean_data
+
 
 def upload_file(request):
     """Mostrar formulario de subida y procesar el archivo para extraer metadatos."""
@@ -32,7 +54,8 @@ def upload_file(request):
 
         if uploaded.size > MAX_FILE_SIZE:
             messages.error(
-                request, "El archivo excede el tamaño máximo permitido (10 MB)."
+                request,
+                f"El archivo excede el tamaño máximo permitido ({MAX_FILE_SIZE/1024/1024} MB).",
             )
             return redirect(reverse("exiftool:upload"))
 
@@ -42,336 +65,188 @@ def upload_file(request):
                 "Tipo de archivo no recomendado; se intentará procesar de todos modos.",
             )
 
-        # Guardar temporalmente
-        tmp_dir = tempfile.mkdtemp(prefix="exif_")
-        tmp_path = os.path.join(tmp_dir, uploaded.name)
-        with open(tmp_path, "wb+") as f:
-            for chunk in uploaded.chunks():
-                f.write(chunk)
-
-        # Intentar usar piexif para JPEG/EXIF (Python); si falla, fallback a exiftool subprocess
-        metadata = {}
+        # Guardar temporalmente usando chunks para no saturar RAM
         try:
-            import piexif
+            tmp_dir = tempfile.mkdtemp(prefix="exif_")
+            tmp_path = os.path.join(tmp_dir, uploaded.name)
 
-            exif_dict = piexif.load(tmp_path)
-            # Convert piexif structure to a flat readable dict
-            for ifd_name, ifd in exif_dict.items():
-                if ifd is None:
-                    continue
-                for tag, val in ifd.items():
-                    tag_info = piexif.TAGS.get(ifd_name, {}).get(tag, {})
-                    tag_name = tag_info.get("name", str(tag))
-                    # Decode bytes
-                    if isinstance(val, bytes):
-                        try:
-                            v = val.decode("utf-8", errors="ignore")
-                        except Exception:
-                            v = str(val)
-                    else:
-                        v = val
-                    metadata[tag_name] = v
+            with open(tmp_path, "wb+") as f:
+                for chunk in uploaded.chunks():
+                    f.write(chunk)
+        except Exception as e:
+            logger.error(f"Error escribiendo archivo temporal: {e}")
+            messages.error(request, "Error interno al procesar el archivo.")
+            return redirect(reverse("exiftool:upload"))
 
-        except Exception as piexif_error:
-            # Fallback a subprocess exiftool si está disponible en el sistema
-            metadata = {}
-            logging.getLogger(__name__).debug(
-                "Piexif falló, intentando ExifTool: %s", str(piexif_error)
-            )
+        metadata = {}
 
+        # --- ESTRATEGIA 1: Piexif (Solo para JPEGs pequeños/medianos) ---
+        # Si el archivo es muy grande (>10MB), saltamos piexif para evitar cargar todo en RAM python
+        use_piexif = (
+            uploaded.content_type == "image/jpeg" and uploaded.size < 10 * 1024 * 1024
+        )
+
+        if use_piexif:
             try:
-                # Rutas posibles de ExifTool
-                exiftool_paths = [
-                    "/usr/bin/exiftool",  # Ubuntu/Debian estándar
-                    "/usr/local/bin/exiftool",  # Instalación manual
-                    "/opt/homebrew/bin/exiftool",  # macOS
-                ]
+                import piexif
 
-                exiftool_path = None
-                for path in exiftool_paths:
-                    if os.path.exists(path) and os.access(path, os.X_OK):
-                        exiftool_path = path
-                        break
+                exif_dict = piexif.load(tmp_path)
+                for ifd_name, ifd in exif_dict.items():
+                    if ifd is None:
+                        continue
+                    for tag, val in ifd.items():
+                        tag_info = piexif.TAGS.get(ifd_name, {}).get(tag, {})
+                        tag_name = tag_info.get("name", str(tag))
 
-                # Si no se encontró en rutas fijas, buscar en PATH
-                if not exiftool_path:
-                    try:
-                        result = subprocess.run(
-                            ["which", "exiftool"],
-                            capture_output=True,
-                            text=True,
-                            timeout=5,
-                        )
-                        if result.returncode == 0:
-                            exiftool_path = result.stdout.strip()
-                    except Exception:
-                        pass
+                        if isinstance(val, bytes):
+                            try:
+                                v = val.decode("utf-8", errors="ignore")
+                            except Exception:
+                                v = "<datos binarios>"  # No guardar bytes crudos
+                        else:
+                            v = val
+                        metadata[tag_name] = v
+            except Exception as piexif_error:
+                logger.debug(f"Piexif falló o se omitió: {piexif_error}")
+                metadata = {}  # Reiniciar para intentar con ExifTool
 
-                if not exiftool_path:
-                    logging.getLogger(__name__).warning(
-                        "ExifTool no encontrado en el sistema"
-                    )
-                    # Continuar sin metadata
-                    metadata = {}
-                else:
-                    # Ejecutar exiftool
-                    logging.getLogger(__name__).debug(
-                        "Ejecutando ExifTool desde: %s", exiftool_path
-                    )
-
-                    proc = subprocess.run(
-                        [exiftool_path, "-json", "-q", tmp_path],
-                        capture_output=True,
-                        text=True,
-                        timeout=30,
-                        check=False,
-                    )
-
-                    if proc.returncode == 0 and proc.stdout:
-                        import json
-
-                        try:
-                            parsed = json.loads(proc.stdout)
-                            if isinstance(parsed, list) and parsed:
-                                metadata = parsed[0]
-                                logging.getLogger(__name__).info(
-                                    "ExifTool extrajo %s metadatos de %s",
-                                    len(metadata),
-                                    uploaded.name,
-                                )
-                        except json.JSONDecodeError as e:
-                            logging.getLogger(__name__).error(
-                                "Error parsing ExifTool JSON: %s. Output: %s",
-                                e,
-                                proc.stdout[:200],
-                            )
-                    else:
-                        logging.getLogger(__name__).warning(
-                            "ExifTool falló. Code: %s, Error: %s",
-                            proc.returncode,
-                            proc.stderr[:200] if proc.stderr else "Sin error",
-                        )
-
-            except subprocess.TimeoutExpired:
-                logging.getLogger(__name__).error(
-                    "ExifTool timeout después de 30 segundos"
-                )
-            except Exception as e:
-                logging.getLogger(__name__).error(
-                    "Error inesperado con ExifTool: %s", str(e)
-                )
-
-        # Si no se extrajeron metadatos, avisar al usuario con sugerencias
+        # --- ESTRATEGIA 2: ExifTool (Subprocess) ---
         if not metadata:
-            # Log for debugging
-            logging.getLogger(__name__).info(
-                "No metadata extracted for file %s (content_type=%s)",
-                uploaded.name,
-                uploaded.content_type,
-            )
-            # User-facing message: more specific for JPEG vs others
-            if uploaded.content_type == "image/jpeg":
-                messages.warning(
-                    request,
-                    "No se encontraron metadatos EXIF. Asegúrate de que la imagen contiene EXIF o instala 'exiftool' en el servidor para una extracción más completa.",
-                )
-            else:
-                messages.warning(
-                    request,
-                    "No se encontraron metadatos. Para formatos distintos a JPEG (PNG, PDF, vídeos) instala 'exiftool' en el sistema o sube un JPEG con EXIF.",
-                )
+            try:
+                # Buscar ExifTool
+                exiftool_path = "exiftool"  # Asumimos que está en PATH tras instalarlo (apt install exiftool)
 
-        # Si el usuario no quiere guardar, borrar archivo
+                # Comprobar si existe (opcional, subprocess lanzará FileNotFoundError si no)
+                # Ejecutar exiftool optimizado
+                # -j: JSON output
+                # -q: Quiet
+                # -n: No print conversion (valores numéricos reales para coordenadas)
+                # -b-: IMPORTANTE -> NO extraer datos binarios (evita OOM)
+                # -u: Extract unknown tags
+
+                cmd = [exiftool_path, "-json", "-q", "-n", "-b-", "-u", tmp_path]
+
+                logger.debug(f"Ejecutando: {' '.join(cmd)}")
+
+                proc = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+
+                if proc.returncode == 0 and proc.stdout:
+                    parsed = json.loads(proc.stdout)
+                    if isinstance(parsed, list) and parsed:
+                        metadata = parsed[0]
+                        logger.info(
+                            f"ExifTool extrajo {len(metadata)} tags de {uploaded.name}"
+                        )
+                else:
+                    logger.warning(f"ExifTool stderr: {proc.stderr}")
+
+            except FileNotFoundError:
+                logger.error("ExifTool no está instalado en el servidor.")
+            except subprocess.TimeoutExpired:
+                logger.error("ExifTool timeout.")
+            except json.JSONDecodeError:
+                logger.error("Error decodificando JSON de ExifTool.")
+            except Exception as e:
+                logger.error(f"Error general ExifTool: {e}")
+
+        # --- Limpieza y Lógica de Coordenadas ---
+
+        # Eliminar archivo si no se pide guardar
         if not keep:
             try:
                 os.remove(tmp_path)
+                os.rmdir(tmp_dir)
             except Exception:
                 pass
 
-        # Limpiar directorio temporal
-        try:
-            os.rmdir(tmp_dir)
-        except Exception:
-            pass
+        if not metadata:
+            messages.warning(request, "No se pudieron extraer metadatos.")
+            return redirect(reverse("exiftool:upload"))
 
-        # Preparar URLs de mapa si hay coordenadas (soporte para DJI)
+        # Procesar coordenadas (Logica simplificada gracias a flag -n de exiftool)
         map_url_target = None
         map_url_drone = None
         target_coords = None
         drone_coords = None
         drone_alt = None
 
-        def dms_to_decimal(dms_str):
-            """Convert a DMS string like '18 deg 29' 56.56" N' to decimal degrees."""
-            import re
-
-            if not dms_str:
+        # Helper interno para flotantes seguros
+        def safe_float(val):
+            try:
+                return float(val)
+            except (ValueError, TypeError):
                 return None
 
-            # Handle piexif-style rational tuples: ((deg_num,deg_den),(min_num,min_den),(sec_num,sec_den))
+        # Drone Coords
+        lat = safe_float(metadata.get("GPSLatitude")) or safe_float(
+            metadata.get("Exif_GPSLatitude")
+        )
+        lon = safe_float(metadata.get("GPSLongitude")) or safe_float(
+            metadata.get("Exif_GPSLongitude")
+        )
+
+        # Como usamos flag -n en ExifTool, los números ya vienen decimales (ej: 19.4326)
+        # o a veces positivos necesitando referencia. Revisamos Refs por si acaso.
+        lat_ref = str(metadata.get("GPSLatitudeRef", "")).upper()
+        lon_ref = str(metadata.get("GPSLongitudeRef", "")).upper()
+
+        if lat is not None and lon is not None:
+            if lat_ref.startswith("S") and lat > 0:
+                lat = -lat
+            if lon_ref.startswith("W") and lon > 0:
+                lon = -lon
+
+            drone_coords = (lat, lon)
+            map_url_drone = f"https://www.openstreetmap.org/?mlat={lat}&mlon={lon}#map=18/{lat}/{lon}"
+
+        # Altitude
+        drone_alt = safe_float(
+            metadata.get("GPSAltitude") or metadata.get("Exif_GPSAltitude")
+        )
+
+        # Target Coords (DJI LRF)
+        tlat = safe_float(
+            metadata.get("LRFTargetLat") or metadata.get("LRFTargetLatitude")
+        )
+        tlon = safe_float(
+            metadata.get("LRFTargetLon") or metadata.get("LRFTargetLongitude")
+        )
+
+        if tlat is not None and tlon is not None:
+            target_coords = (tlat, tlon)
+            map_url_target = f"https://www.openstreetmap.org/?mlat={tlat}&mlon={tlon}#map=18/{tlat}/{tlon}"
+
+        def round_coord(val):
             try:
-                if isinstance(dms_str, (list, tuple)):
-                    parts = list(dms_str)
-                    # If nested rationals
-                    if parts and isinstance(parts[0], (list, tuple)):
+                return round(float(val), 5)
+            except (TypeError, ValueError):
+                return val
 
-                        def rat_to_float(r):
-                            try:
-                                return float(r[0]) / float(r[1])
-                            except Exception:
-                                try:
-                                    return float(r[0])
-                                except Exception:
-                                    return None
-
-                        deg = rat_to_float(parts[0])
-                        minutes = rat_to_float(parts[1]) if len(parts) > 1 else 0
-                        seconds = rat_to_float(parts[2]) if len(parts) > 2 else 0
-                        if deg is None:
-                            return None
-                        minutes = minutes or 0
-                        seconds = seconds or 0
-                        return deg + minutes / 60.0 + seconds / 3600.0
-
-                    # If simple numeric tuple
-                    try:
-                        return float(parts[0])
-                    except Exception:
-                        pass
-            except Exception:
-                pass
-
-            s = str(dms_str).strip()
-            # Try to extract decimal directly
-            try:
-                return float(s)
-            except Exception:
-                pass
-
-            # Regex to capture D M S and direction
-            m = re.search(
-                r"([0-9]{1,3})\D+([0-9]{1,3})\D+([0-9]{1,3}(?:\.[0-9]+)?)\D*([NnSsEeWw])",
-                s,
+        # Aplicar redondeo a las tuplas si existen
+        if target_coords:
+            target_coords = (
+                round_coord(target_coords[0]),
+                round_coord(target_coords[1]),
             )
-            if m:
-                deg = float(m.group(1))
-                minutes = float(m.group(2))
-                seconds = float(m.group(3))
-                dirc = m.group(4).upper()
-                dec = deg + minutes / 60.0 + seconds / 3600.0
-                if dirc in ("S", "W"):
-                    dec = -dec
-                return dec
 
-            # Fallback: try to split by non-digit and parse first two numbers
-            parts = re.findall(r"[-+]?[0-9]*\.?[0-9]+", s)
-            if len(parts) >= 2:
-                try:
-                    deg = float(parts[0])
-                    # If only one number, assume decimal
-                    if len(parts) == 1:
-                        return deg
-                    # If two numbers and values look like D and M
-                    if len(parts) >= 3:
-                        minutes = float(parts[1])
-                        seconds = float(parts[2])
-                        dec = deg + minutes / 60.0 + seconds / 3600.0
-                        return dec
-                    else:
-                        # two parts; interpret as decimal lat/lon
-                        return float(parts[0])
-                except Exception:
-                    return None
-            return None
+        if drone_coords:
+            drone_coords = (round_coord(drone_coords[0]), round_coord(drone_coords[1]))
 
-        try:
-            if isinstance(metadata, dict):
-                # Target (LRF) - decimal values expected
-                tlat = metadata.get("LRFTargetLat") or metadata.get("LRFTargetLatitude")
-                tlon = metadata.get("LRFTargetLon") or metadata.get(
-                    "LRFTargetLongitude"
-                )
-                if tlat is not None and tlon is not None:
-                    try:
-                        tlat_f = float(str(tlat))
-                        tlon_f = float(str(tlon))
-                        target_coords = (tlat_f, tlon_f)
-                        map_url_target = f"https://www.openstreetmap.org/?mlat={tlat_f}&mlon={tlon_f}#map=18/{tlat_f}/{tlon_f}"
-                    except Exception:
-                        target_coords = None
+        if drone_alt:
+            drone_alt = round(float(drone_alt), 2)  # Altitud a 2 decimales
 
-                # Drone position - GPSLatitude/GPSLongitude (possibly DMS)
-                g_lat = metadata.get("GPSLatitude") or metadata.get("Exif_GPSLatitude")
-                g_lon = metadata.get("GPSLongitude") or metadata.get(
-                    "Exif_GPSLongitude"
-                )
-                if g_lat and g_lon:
-                    # Also check for latitude/longitude references (N/S, E/W)
-                    lat_ref = metadata.get("GPSLatitudeRef") or metadata.get(
-                        "Exif_GPSLatitudeRef"
-                    )
-                    lon_ref = metadata.get("GPSLongitudeRef") or metadata.get(
-                        "Exif_GPSLongitudeRef"
-                    )
+        # --- GUARDAR EN SESIÓN (SANITIZADO) ---
+        # IMPORTANTE: Limpiamos los datos antes de meterlos a la sesión
+        clean_meta = clean_metadata_for_session(metadata)
 
-                    lat_dec = dms_to_decimal(g_lat)
-                    lon_dec = dms_to_decimal(g_lon)
-
-                    # Apply sign from refs if available
-                    try:
-                        if lat_dec is not None and lat_ref:
-                            lr = (
-                                lat_ref.decode("utf-8")
-                                if isinstance(lat_ref, (bytes, bytearray))
-                                else str(lat_ref)
-                            )
-                            if lr.upper().startswith("S"):
-                                lat_dec = -abs(lat_dec)
-                        if lon_dec is not None and lon_ref:
-                            rr = (
-                                lon_ref.decode("utf-8")
-                                if isinstance(lon_ref, (bytes, bytearray))
-                                else str(lon_ref)
-                            )
-                            if rr.upper().startswith("W"):
-                                lon_dec = -abs(lon_dec)
-                    except Exception:
-                        pass
-
-                    if lat_dec is not None and lon_dec is not None:
-                        drone_coords = (lat_dec, lon_dec)
-                        map_url_drone = f"https://www.openstreetmap.org/?mlat={lat_dec}&mlon={lon_dec}#map=18/{lat_dec}/{lon_dec}"
-
-                # Altitude
-                g_alt = metadata.get("GPSAltitude") or metadata.get("Exif_GPSAltitude")
-                if g_alt:
-                    # GPSAltitude can be a rational tuple or a string; handle common cases
-                    try:
-                        # If piexif rational
-                        if isinstance(g_alt, (list, tuple)):
-                            # e.g., (2967, 10) -> 296.7
-                            num = g_alt[0]
-                            den = g_alt[1] if len(g_alt) > 1 else 1
-                            drone_alt = float(num) / float(den) if den else None
-                        else:
-                            import re
-
-                            parts = re.findall(r"[-+]?[0-9]*\.?[0-9]+", str(g_alt))
-                            if parts:
-                                drone_alt = float(parts[0])
-                    except Exception:
-                        drone_alt = None
-        except Exception:
-            pass
-
-        # Redirigir a la vista de metadatos
-        request.session["exif_metadata"] = metadata
+        request.session["exif_metadata"] = clean_meta
         request.session["exif_filename"] = uploaded.name
         request.session["exif_map_target_url"] = map_url_target
         request.session["exif_map_drone_url"] = map_url_drone
         request.session["exif_target_coords"] = target_coords
         request.session["exif_drone_coords"] = drone_coords
         request.session["exif_drone_alt"] = drone_alt
+
         return redirect(reverse("exiftool:metadata"))
 
     return render(request, "exiftool/upload.html")

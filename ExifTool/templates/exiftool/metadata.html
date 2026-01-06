@@ -1,67 +1,204 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Metadatos - ExifTool{% endblock %}
+{% block title %}Resultados de Análisis - ExifTool{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container mt-4 mb-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="mb-1"><i class="bi bi-file-earmark-code"></i> Reporte de Metadatos</h2>
+      <p class="text-muted mb-0">Archivo analizado: <span class="fw-bold text-dark">{{ filename }}</span></p>
+    </div>
+    <div>
+      <a href="{% url 'exiftool:upload' %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Subir otro archivo
+      </a>
+    </div>
+  </div>
+
   <div class="row">
     <div class="col-md-12">
-      <a href="{% url 'exiftool:upload' %}" class="btn btn-outline-secondary mb-3"><i class="bi bi-arrow-left"></i> Volver</a>
-      <div class="card shadow-sm">
+      
+      {% if map_drone or map_target %}
+      <div class="card shadow-sm mb-4 border-0 bg-light">
         <div class="card-body">
-          <h3 class="card-title">Metadatos extraídos</h3>
-          <p class="text-muted">Mostrando metadatos extraídos del archivo: <strong>{{ filename }}</strong></p>
-
-          {% if metadata %}
-          <div class="mb-3">
-            {% if map_target %}
-            <div class="d-inline-block me-2">
-              <a href="{{ map_target }}" target="_blank" rel="noopener" class="btn btn-outline-primary">
-                <i class="bi bi-bullseye"></i> Ver objetivo
-              </a>
-              {% if target_coords %}
-              <div class="small text-muted mt-1">Objetivo: {{ target_coords.0 }}, {{ target_coords.1 }}</div>
-              {% endif %}
-            </div>
-            {% endif %}
-
+          <h5 class="card-title text-primary mb-3"><i class="bi bi-geo-alt-fill"></i> Inteligencia Geoespacial</h5>
+          <div class="row g-3">
+            
             {% if map_drone %}
-            <div class="d-inline-block">
-              <a href="{{ map_drone }}" target="_blank" rel="noopener" class="btn btn-outline-success">
-                <i class="bi bi-geo-fill"></i> Ver posición del dispositivo
-              </a>
-              {% if drone_coords %}
-              <div class="small text-muted mt-1">Dispositivo: {{ drone_coords.0 }}, {{ drone_coords.1 }}{% if drone_alt %} • Alt: {{ drone_alt }} m{% endif %}</div>
-              {% endif %}
+            <div class="col-md-6">
+              <div class="card h-100 border-success mb-3" style="border-left: 5px solid #198754;">
+                <div class="card-body">
+                  <h6 class="card-subtitle mb-2 text-muted">Posición del Dispositivo (GPS)</h6>
+                    <p class="card-text font-monospace mb-2">
+                      {% if drone_coords %}
+                        Lat: {{ drone_coords.0 }}<br>
+                        Lon: {{ drone_coords.1 }}
+                        {% if drone_alt %}<br>Alt: {{ drone_alt }} m{% endif %}
+                      {% else %}
+                        Coordenadas disponibles en mapa
+                      {% endif %}
+                    </p>
+                  <a href="{{ map_drone }}" target="_blank" rel="noopener" class="btn btn-sm btn-success">
+                    <i class="bi bi-map-fill"></i> Ver en OpenStreetMap
+                  </a>
+                </div>
+              </div>
             </div>
             {% endif %}
+
+            {% if map_target %}
+            <div class="col-md-6">
+              <div class="card h-100 border-danger mb-3" style="border-left: 5px solid #dc3545;">
+                <div class="card-body">
+                  <h6 class="card-subtitle mb-2 text-muted">Objetivo Designado (Target/LRF)</h6>
+                    <p class="card-text font-monospace mb-2">
+                      {% if target_coords %}
+                        Lat: {{ target_coords.0 }}<br>
+                        Lon: {{ target_coords.1 }}
+                      {% else %}
+                        Coordenadas disponibles en mapa
+                      {% endif %}
+                    </p>
+                  <a href="{{ map_target }}" target="_blank" rel="noopener" class="btn btn-sm btn-danger">
+                    <i class="bi bi-crosshair"></i> Ver Objetivo en Mapa
+                  </a>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+
           </div>
-          <div class="table-responsive">
-            <table class="table table-sm table-striped">
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="card shadow-sm">
+        <div class="card-header bg-white py-3">
+          <div class="row align-items-center">
+            <div class="col-md-6">
+              <h5 class="mb-0">Detalle Completo</h5>
+            </div>
+            <div class="col-md-6">
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
+                <input type="text" id="metadataSearch" class="form-control border-start-0" placeholder="Filtrar claves (ej: Model, Date, Serial)...">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body p-0">
+          {% if metadata %}
+          <div class="table-responsive" style="max-height: 800px; overflow-y: auto;">
+            <table class="table table-hover table-striped mb-0" id="metadataTable">
               <thead class="table-dark sticky-top">
                 <tr>
-                  <th>Campo</th>
+                  <th style="width: 35%;">Etiqueta (Key)</th>
                   <th>Valor</th>
-                </tr>
+                  <th style="width: 50px;"></th> </tr>
               </thead>
               <tbody>
                 {% for key, value in metadata.items %}
                 <tr>
-                  <td class="text-break">{{ key }}</td>
-                  <td class="text-break"><pre class="mb-0">{{ value }}</pre></td>
+                  <td class="fw-bold text-secondary text-break align-middle">{{ key }}</td>
+                  <td class="font-monospace text-break align-middle text-primary small">
+                    {{ value }}
+                  </td>
+                  <td class="align-middle text-end">
+                     <button class="btn btn-sm btn-link text-secondary copy-btn" data-value="{{ value }}" title="Copiar valor">
+                        <i class="bi bi-clipboard"></i>
+                     </button>
+                  </td>
                 </tr>
                 {% endfor %}
               </tbody>
             </table>
           </div>
           {% else %}
-          <div class="alert alert-warning">No se encontraron metadatos o el archivo no es compatible.</div>
+          <div class="p-5 text-center">
+            <div class="text-muted mb-3"><i class="bi bi-exclamation-circle display-4"></i></div>
+            <h4>No se encontraron metadatos</h4>
+            <p>El archivo parece no contener información EXIF legible o el formato no es compatible.</p>
+          </div>
           {% endif %}
-
+        </div>
+        <div class="card-footer text-muted small">
+          Total de etiquetas encontradas: {{ metadata|length }}
         </div>
       </div>
+
     </div>
   </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Funcionalidad de Búsqueda
+    const searchInput = document.getElementById('metadataSearch');
+    const table = document.getElementById('metadataTable');
+    
+    if (searchInput && table) {
+        searchInput.addEventListener('keyup', function() {
+            const filter = searchInput.value.toLowerCase();
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < rows.length; i++) { // Empezar en 1 para saltar el header
+                const keyCol = rows[i].getElementsByTagName('td')[0];
+                const valCol = rows[i].getElementsByTagName('td')[1];
+                
+                if (keyCol && valCol) {
+                    const keyText = keyCol.textContent || keyCol.innerText;
+                    const valText = valCol.textContent || valCol.innerText;
+
+                    if (keyText.toLowerCase().indexOf(filter) > -1 || valText.toLowerCase().indexOf(filter) > -1) {
+                        rows[i].style.display = "";
+                    } else {
+                        rows[i].style.display = "none";
+                    }
+                }
+            }
+        });
+    }
+
+    // 2. Funcionalidad de Copiar al Portapapeles
+    const copyBtns = document.querySelectorAll('.copy-btn');
+    copyBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const textToCopy = this.getAttribute('data-value');
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                // Feedback visual temporal
+                const originalIcon = this.innerHTML;
+                this.innerHTML = '<i class="bi bi-check2 text-success"></i>';
+                this.classList.remove('text-secondary');
+                
+                setTimeout(() => {
+                    this.innerHTML = originalIcon;
+                    this.classList.add('text-secondary');
+                }, 1500);
+            }).catch(err => {
+                console.error('Error al copiar: ', err);
+            });
+        });
+    });
+});
+</script>
+
+<style>
+    /* Scrollbar más estético para la tabla */
+    .table-responsive::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    .table-responsive::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        border-radius: 4px;
+    }
+    .table-responsive::-webkit-scrollbar-track {
+        background-color: #f1f1f1;
+    }
+</style>
+
 {% endblock %}

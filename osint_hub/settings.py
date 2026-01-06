@@ -150,11 +150,12 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = True
 
 # CSRF Trusted Origins (para Render.com y PythonAnywhere)
-CSRF_TRUSTED_ORIGINS = config(
-    "CSRF_TRUSTED_ORIGINS",
-    default="https://*.pythonanywhere.com,https://*.onrender.com",
-    cast=lambda v: [s.strip() for s in v.split(",")] if v else [],
-)
+CSRF_TRUSTED_ORIGINS = ["https://dabg.dev", "https://www.dabg.dev"]
+
+# 2. Configura los proxies de seguridad (necesario para Nginx/DigitalOcean)
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_PORT = True
 
 # Configurar path a ExifTool
 EXIFTOOL_PATH = "/usr/bin/exiftool"  # Ruta por defecto en Ubuntu

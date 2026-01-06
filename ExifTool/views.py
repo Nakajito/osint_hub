@@ -138,6 +138,9 @@ def upload_file(request):
                 proc = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
 
                 if proc.returncode == 0 and proc.stdout:
+                    # --- AÑADE ESTA LÍNEA PARA VER EL RESULTADO REAL EN EL LOG ---
+                    logger.info(f"JSON CRUDO EXIFTOOL: {proc.stdout}")
+
                     parsed = json.loads(proc.stdout)
                     if isinstance(parsed, list) and parsed:
                         metadata = parsed[0]

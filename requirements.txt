@@ -79,3 +79,4 @@ wcwidth==0.2.14
 wheel==0.45.1
 whitenoise==6.8.2
 wrapt==2.0.1
+django-csp==3.8

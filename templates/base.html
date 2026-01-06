@@ -60,6 +60,14 @@
     
     <script src="{% static 'js/main.js' %}"></script>
     
+    <script>
+        console.log("Mapa cargado");
+    </script>
+
+    <script nonce="{{ request.csp_nonce }}">
+        console.log("Mapa cargado");
+    </script>
+    
     {% block extra_js %}{% endblock %}
 </body>
 </html>

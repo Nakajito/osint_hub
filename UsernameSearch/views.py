@@ -7,6 +7,12 @@ import shutil
 import re
 from datetime import datetime
 
+# Intentamos importar werkzeug, si no está, usaremos el fallback
+try:
+    from werkzeug.utils import secure_filename
+except ImportError:
+    secure_filename = None
+
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -19,11 +25,30 @@ from .forms import UsernameSearchForm
 logger = logging.getLogger(__name__)
 
 
+def get_safe_filename(filename):
+    """
+    Sanitiza estrictamente el input para usarlo como nombre de archivo o directorio.
+    Elimina caracteres peligrosos y Directory Traversal.
+    """
+    if secure_filename:
+        # Opción A: Usar Werkzeug si está disponible
+        safe = secure_filename(filename)
+    else:
+        # Opción B: Fallback estricto (Regex)
+        # Elimina todo lo que NO sea alfanumérico (a-z, A-Z, 0-9).
+        # Si quieres permitir guiones bajos, usa r'[^a-zA-Z0-9_]'
+        safe = re.sub(r"[^a-zA-Z0-9]", "", str(filename).strip())
+
+    # Si el nombre queda vacío tras la limpieza, usamos uno por defecto
+    if not safe:
+        safe = "unknown_user"
+
+    return safe
+
+
 def _run_sherlock(username, timeout=300):
     """Run Sherlock and return a list of result dicts: {'site','url','exists'}.
-
-    This tries `python -m sherlock` first and falls back to a `sherlock` executable
-    if available. Supports parsing JSON output or a simple CLI-style fallback.
+    (Sin cambios en la lógica de ejecución, solo sanitización externa)
     """
     cmd_mod = [
         sys.executable,
@@ -39,13 +64,11 @@ def _run_sherlock(username, timeout=300):
     stderr = ""
 
     try:
-        # Ejecutamos con un timeout largo para dar tiempo a todos los sitios
         proc = subprocess.run(cmd_mod, capture_output=True, text=True, timeout=timeout)
         stdout = proc.stdout or ""
         stderr = proc.stderr or ""
     except subprocess.TimeoutExpired:
         logger.error("Sherlock Timeout: El proceso tardó más de 300s")
-        # Devolvemos lo que haya encontrado hasta el momento o un error
         return [
             {
                 "site": "Timeout",
@@ -58,7 +81,6 @@ def _run_sherlock(username, timeout=300):
         logger.error(f"Error crítico ejecutando sherlock: {e}")
         return []
 
-    # Fallback: Si el módulo falla, intentamos buscar el binario 'sherlock'
     if not stdout:
         sherlock_exe = shutil.which("sherlock")
         if not sherlock_exe:
@@ -86,13 +108,8 @@ def _run_sherlock(username, timeout=300):
 
     results = []
 
-    # Intento 1: Parseo de Texto (Más robusto para VPS)
-    # Buscamos líneas que empiecen con "[+]" que indica éxito en Sherlock
     for line in (stdout or "").splitlines():
         line = line.strip()
-
-        # Ejemplo de línea exitosa: "[+] Wikipedia: https://en.wikipedia.org/wiki/User:user"
-        # La regex busca: Que empiece con [+], capture el nombre, y capture la URL
         match = re.search(r"\[\+\]\s+([^:]+):\s+(http.*)$", line)
 
         if match:
@@ -100,9 +117,7 @@ def _run_sherlock(username, timeout=300):
             url = match.group(2).strip()
             results.append({"site": site, "url": url, "exists": True})
 
-    # Si no encontramos nada con regex, intentamos ver si hubo error
     if not results and "Blocked" in stdout:
-        # Opcional: Agregar un resultado falso para avisar al usuario
         results.append(
             {
                 "site": "Aviso",
@@ -120,11 +135,13 @@ def search_username(request):
     if request.method == "POST":
         form = UsernameSearchForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data.get("username")
+            # Username original para Sherlock (puede contener puntos, guiones, etc.)
+            raw_username = form.cleaned_data.get("username")
+
+            # Username SANITIZADO para Rutas de Archivos (Directory Traversal Prevention)
+            safe_filename = get_safe_filename(raw_username)
+
             try:
-                # Determine where to persist search results.
-                # Priority: settings.SEARCH_RESULTS_DIR -> user-local (~/.local/share/osint_hub)
-                # -> fallback to settings.BASE_DIR/search_results
                 base_results = None
                 search_root = getattr(settings, "SEARCH_RESULTS_DIR", None)
                 if not search_root:
@@ -138,37 +155,41 @@ def search_username(request):
                         search_root = os.path.join(project_base, "search_results")
 
                 if search_root:
-                    # Use a per-username subdirectory to avoid collisions between searches
-                    base_results = os.path.join(search_root, username)
+                    # USAR SAFE_FILENAME AQUÍ
+                    base_results = os.path.join(search_root, safe_filename)
                     try:
+                        # os.makedirs es seguro ahora porque base_results usa el nombre sanitizado
                         os.makedirs(base_results, exist_ok=True)
                     except Exception:
                         logger.exception(
                             "Failed to create results directory: %s", base_results
                         )
                         base_results = None
+
                 logger.info("search_username: persistence dir=%s", base_results)
 
-                results = _run_sherlock(username)
+                # Ejecutamos Sherlock con el username REAL
+                results = _run_sherlock(raw_username)
 
                 request.session["username_search_results"] = results
-                request.session["username_search_username"] = username
+                request.session["username_search_username"] = raw_username
 
-                # persist files
+                # Persistir archivos usando SAFE_FILENAME
                 if base_results:
                     try:
                         timestamp = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+                        # Usamos safe_filename en el nombre del archivo
                         json_path = os.path.join(
-                            base_results, f"sherlock_{username}_{timestamp}.json"
+                            base_results, f"sherlock_{safe_filename}_{timestamp}.json"
                         )
                         with open(json_path, "w", encoding="utf-8") as jf:
                             json.dump(results, jf, ensure_ascii=False, indent=2)
 
                         txt_path = os.path.join(
-                            base_results, f"sherlock_{username}_{timestamp}.txt"
+                            base_results, f"sherlock_{safe_filename}_{timestamp}.txt"
                         )
                         lines = [
-                            f"Sherlock results for: {username}",
+                            f"Sherlock results for: {raw_username}",
                             f"Timestamp: {datetime.utcnow().isoformat()}Z",
                             "",
                         ]
@@ -192,8 +213,7 @@ def search_username(request):
                     except Exception:
                         logger.exception("Failed to write search results to disk")
 
-                # Increment a per-session counter and, after 3 searches, clear the
-                # `search_results/username` directory to remove persisted files.
+                # Limpieza de archivos antiguos
                 try:
                     cnt = (
                         int(request.session.get("username_search_dir_clean_count", 0))
@@ -202,6 +222,7 @@ def search_username(request):
                     request.session["username_search_dir_clean_count"] = cnt
                     if base_results and cnt >= 3:
                         try:
+                            # base_results ya es seguro, podemos listar
                             for fname in os.listdir(base_results):
                                 path = os.path.join(base_results, fname)
                                 try:
@@ -219,33 +240,41 @@ def search_username(request):
                                 "Failed to iterate results dir for auto-clean: %s",
                                 base_results,
                             )
-                        # reset counter after cleaning
                         request.session["username_search_dir_clean_count"] = 0
                 except Exception:
                     logger.exception(
                         "Error updating username_search_dir_clean_count in session"
                     )
 
-                # Ensure any legacy artifact created in the project root with the
-                # username (e.g. 'user.txt') is removed so we don't persist
-                # sensitive output into the repo root.
+                # Limpieza Legacy (Archivos antiguos en raíz)
+                # IMPORTANTE: Sanitizar también aquí para evitar borrar archivos arbitrarios
                 try:
                     project_base = getattr(settings, "BASE_DIR", None)
                     if project_base:
-                        # Only remove files in the project base with specific extensions
                         for ext in (".txt", ".json", ".csv", ""):
-                            candidate = os.path.join(project_base, f"{username}{ext}")
-                            if os.path.exists(candidate) and os.path.isfile(candidate):
-                                try:
-                                    os.unlink(candidate)
-                                    logger.info(
-                                        "Removed legacy root file: %s", candidate
-                                    )
-                                except Exception:
-                                    logger.exception(
-                                        "Failed to remove legacy root file: %s",
-                                        candidate,
-                                    )
+                            # Usamos safe_filename para evitar '..' en la construcción del path
+                            candidate = os.path.join(
+                                project_base, f"{safe_filename}{ext}"
+                            )
+
+                            # Validación extra de seguridad: asegurar que candidate está dentro de project_base
+                            # (Aunque safe_filename debería prevenirlo, es defensa en profundidad)
+                            if os.path.abspath(candidate).startswith(
+                                os.path.abspath(project_base)
+                            ):
+                                if os.path.exists(candidate) and os.path.isfile(
+                                    candidate
+                                ):
+                                    try:
+                                        os.unlink(candidate)
+                                        logger.info(
+                                            "Removed legacy root file: %s", candidate
+                                        )
+                                    except Exception:
+                                        logger.exception(
+                                            "Failed to remove legacy root file: %s",
+                                            candidate,
+                                        )
                 except Exception:
                     logger.exception(
                         "Error while attempting to clean legacy root files"
@@ -327,20 +356,19 @@ def download_results(request):
     """Return a plain-text file with the search results stored in session."""
     results = request.session.get("username_search_results", [])
     username = request.session.get("username_search_username", "-")
-    # Build CSV content
+
+    # Sanitizamos el nombre de usuario para el archivo de descarga también
+    safe_filename = get_safe_filename(username)
+
     import csv
     from io import StringIO
 
     sio = StringIO()
     writer = csv.writer(sio)
 
-    # CSV columns (header + rows)
     writer.writerow(["site", "url", "exists", "error"])
 
-    if not results:
-        # no results -> produce no data rows (only header), or optionally one row indicating empty
-        pass
-    else:
+    if results:
         for r in results:
             site = r.get("site") or ""
             url = r.get("url") or ""
@@ -349,7 +377,7 @@ def download_results(request):
             writer.writerow([site, url, exists, error])
 
     content = sio.getvalue()
-    filename = f"sherlock_{username}.csv"
+    filename = f"sherlock_{safe_filename}.csv"
     response = HttpResponse(content, content_type="text/csv; charset=utf-8")
     response["Content-Disposition"] = f'attachment; filename="{filename}"'
     return response

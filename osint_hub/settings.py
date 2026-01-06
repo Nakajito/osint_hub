@@ -9,11 +9,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Usar variables de entorno
 SECRET_KEY = config(
     "SECRET_KEY",
-    default="django-insecure-4gnf%1w^*a8a10-9f&l3s+fd0f0^88segf3o47&)bn=v6x2sd(",
 )
 DEBUG = config("DEBUG", default=True, cast=bool)
 
-# ALLOWED_HOSTS - Compatible con PythonAnywhere y Render
+# ALLOWED_HOSTS configurado desde variable de entorno
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS",
     default="localhost,127.0.0.1",
@@ -42,6 +41,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
+    "csp.middleware.CSPMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -180,11 +180,55 @@ CELERY_TASK_TIME_LIMIT = 30 * 60  # 30 minutos
 CELERY_RESULT_EXPIRES = 3600  # 1 hora
 CELERY_CACHE_BACKEND = "default"
 
-# En desarrollo, permitir que Celery ejecute tareas de forma síncrona
-# para evitar depender de un broker (útil para debugging local).
-# if DEBUG:
-# CELERY_TASK_ALWAYS_EAGER = True
-# CELERY_TASK_EAGER_PROPAGATES = True
-
 # Opcional: para periodic tasks
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+
+# --- Configuración CSP (Content Security Policy) ---
+
+# 1. Política por defecto: Bloquear todo lo que no esté explícitamente permitido
+CSP_DEFAULT_SRC = ("'self'",)
+
+# 2. Scripts: Permitir local, CDN de Bootstrap y scripts con 'nonce' (para inlines)
+CSP_SCRIPT_SRC = (
+    "'self'",
+    "https://cdn.jsdelivr.net",  # Bootstrap 5 JS
+    "https://code.jquery.com",  # Si usas jQuery
+)
+
+# 3. Estilos: Permitir local y CDNs
+CSP_STYLE_SRC = (
+    "'self'",
+    "https://cdn.jsdelivr.net",  # Bootstrap 5 CSS
+    "https://fonts.googleapis.com",  # Si usas Google Fonts
+)
+
+# 4. Imágenes: Permitir local, data URIs (base64) y tiles de OpenStreetMap
+CSP_IMG_SRC = (
+    "'self'",
+    "data:",
+    "https://*.openstreetmap.org",
+    "https://*.tile.openstreetmap.org",
+)
+
+# 5. Fuentes
+CSP_FONT_SRC = (
+    "'self'",
+    "https://fonts.gstatic.com",
+    "https://cdn.jsdelivr.net",  # Bootstrap Icons
+)
+
+# 6. Iframes: Si embebes el mapa de OpenStreetMap en lugar de solo enlazarlo
+CSP_FRAME_SRC = (
+    "'self'",
+    "https://www.openstreetmap.org",
+)
+
+# 7. Configuración de Nonce (Número usado una vez)
+# Esto permite ejecutar scripts inline específicos (<script nonce="...">)
+# sin permitir 'unsafe-inline' globalmente.
+CSP_INCLUDE_NONCE_IN = ["script-src"]
+
+# --- Modo Reporte (Recomendado para inicio) ---
+# Si pones esto en True, el navegador solo avisará en la consola pero no bloqueará nada.
+# Úsalo para probar en producción un par de días y luego cámbialo a False.
+CSP_REPORT_ONLY = False

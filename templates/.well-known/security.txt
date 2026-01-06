@@ -1,0 +1,8 @@
+Contact: mailto:security@dabg.dev
+Preferred-Languages: es, en
+Canonical: https://dabg.dev/.well-known/security.txt
+# Política:
+# Por favor reporta cualquier vulnerabilidad que encuentres.
+# No realices pruebas que afecten la disponibilidad del servicio (DoS).
+
+Expires: 2027-01-01T00:00:00.000Z

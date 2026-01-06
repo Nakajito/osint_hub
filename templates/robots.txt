@@ -1,0 +1,20 @@
+User-agent: *
+# Bloquear acceso al panel de administración
+Disallow: /admin/
+
+# Bloquear archivos de medios (uploads de usuarios)
+Disallow: /media/
+
+# Bloquear herramientas para evitar indexar búsquedas o resultados sensibles
+Disallow: /email/
+Disallow: /exiftool/
+Disallow: /phone/
+Disallow: /ip/
+Disallow: /user/
+Disallow: /hash/
+
+# Permitir explícitamente la página de inicio y recursos estáticos
+Allow: /
+Allow: /static/
+
+Sitemap: https://dabg.dev/sitemap.xml

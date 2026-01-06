@@ -114,7 +114,14 @@ def upload_file(request):
         if not metadata:
             try:
                 # Buscar ExifTool
-                exiftool_path = "exiftool"  # Asumimos que está en PATH tras instalarlo (apt install exiftool)
+                import shutil
+
+                exiftool_path = shutil.which("exiftool") or "/usr/bin/exiftool"
+
+                # Verificar si realmente existe antes de ejecutar
+                if not os.path.exists(exiftool_path):
+                    logger.error(f"ExifTool no encontrado en: {exiftool_path}")
+                    # Puedes lanzar una excepción o dejar que siga para mostrar el error
 
                 # Comprobar si existe (opcional, subprocess lanzará FileNotFoundError si no)
                 # Ejecutar exiftool optimizado

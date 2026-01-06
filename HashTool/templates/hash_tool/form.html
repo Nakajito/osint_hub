@@ -109,28 +109,12 @@
 
             </div>
 
-        </div>
+        </div>  
     </div>
 
     {% include "includes/disclaimer.html" %}
 </div>
 
-<script>
-    function copyHash() {
-        const hashInput = document.getElementById('hashResult');
-        hashInput.select();
-        hashInput.setSelectionRange(0, 99999); // Para móviles
-        navigator.clipboard.writeText(hashInput.value).then(() => {
-             // Feedback visual opcional
-            const btn = document.querySelector('.btn-outline-primary');
-            const originalHtml = btn.innerHTML;
-            btn.innerHTML = '<i class="bi bi-check"></i> Copiado';
-            btn.classList.replace('btn-outline-primary', 'btn-success');
-            setTimeout(() => {
-                btn.innerHTML = originalHtml;
-                btn.classList.replace('btn-success', 'btn-outline-primary');
-            }, 2000);
-        });
-    }
-</script>
+<script src="{% static 'js/HashTool/validate_form.js' %}"></script>
+
 {% endblock %}

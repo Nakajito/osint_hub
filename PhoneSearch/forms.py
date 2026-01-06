@@ -27,7 +27,7 @@ class PhoneSearchForm(forms.Form):
         # Check if format is valid (at least 2 parts: CODE and PHONE)
         if len(parts) < 2:
             raise forms.ValidationError(
-                "Formato inválido. Usa: CÓDIGO_PAÍS NÚMERO (ej: 521 5535664668)"
+                "Formato inválido. Usa: CÓDIGO_PAÍS NÚMERO (ej: 521 5534123456)."
             )
 
         # Extract country code and phone

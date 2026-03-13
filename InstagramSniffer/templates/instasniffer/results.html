@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Resultados - Instagram Sniffer{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="d-flex mb-3">
+        <a href="{% url 'instasniffer:search' %}" class="btn btn-outline-secondary me-2">
+          <i class="bi bi-arrow-left"></i> Nueva búsqueda
+        </a>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h3 class="card-title">
+            Resultados para <strong>{{ username }}</strong>
+          </h3>
+
+          <div class="mb-3 d-flex align-items-center gap-3">
+            <span class="badge {% if is_private %}bg-danger{% else %}bg-success{% endif %} fs-6">
+              <i class="bi {% if is_private %}bi-lock-fill{% else %}bi-unlock-fill{% endif %} me-1"></i>
+              {% if is_private %}Perfil Privado{% else %}Perfil Público{% endif %}
+            </span>
+            <span class="badge bg-primary fs-6">
+              <i class="bi bi-collection me-1"></i> {{ post_count }} publicación{{ post_count|pluralize:"es" }}
+            </span>
+          </div>
+
+          {% if posts %}
+            <div class="table-responsive">
+              <table class="table table-sm table-striped">
+                <thead class="table-dark sticky-top">
+                  <tr>
+                    <th>#</th>
+                    <th>Tipo</th>
+                    <th>Publicación</th>
+                    <th>Propietario</th>
+                    <th>Colaboradores</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for post in posts %}
+                    <tr>
+                      <td>{{ post.index }}</td>
+                      <td>
+                        {% if post.type == "video" %}
+                          <i class="bi bi-camera-video-fill text-danger" title="Video"></i> Video
+                        {% else %}
+                          <i class="bi bi-image-fill text-success" title="Imagen"></i> Imagen
+                        {% endif %}
+                      </td>
+                      <td>
+                        <a href="{{ post.url }}" target="_blank" rel="noopener">
+                          {{ post.shortcode }}
+                          <i class="bi bi-box-arrow-up-right ms-1 small"></i>
+                        </a>
+                      </td>
+                      <td>
+                        <a href="https://www.instagram.com/{{ post.owner }}" target="_blank" rel="noopener">
+                          @{{ post.owner }}
+                        </a>
+                      </td>
+                      <td>
+                        {% for collab in post.collaborators %}
+                          <a href="https://www.instagram.com/{{ collab }}" target="_blank" rel="noopener" class="badge bg-light text-dark text-decoration-none me-1">
+                            @{{ collab }}
+                          </a>
+                        {% empty %}
+                          <span class="text-muted small">Sin colaboradores</span>
+                        {% endfor %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            <div class="mt-3">
+              <div class="small text-muted">Mostrando {{ post_count }} publicación{{ post_count|pluralize:"es" }}</div>
+            </div>
+          {% else %}
+            <div class="alert alert-warning">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              No se encontraron publicaciones colaborativas para este usuario.
+            </div>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

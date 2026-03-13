@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Resultado Media - Instagram Sniffer{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="d-flex mb-3">
+        <a href="{% url 'instasniffer:media' %}" class="btn btn-outline-secondary me-2">
+          <i class="bi bi-arrow-left"></i> Nueva búsqueda
+        </a>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h3 class="card-title">Resultado de Media</h3>
+
+          {% if success %}
+            <div class="mb-3">
+              <span class="badge {% if is_video %}bg-danger{% else %}bg-success{% endif %} fs-6">
+                {% if is_video %}
+                  <i class="bi bi-camera-video-fill me-1"></i> Video
+                {% else %}
+                  <i class="bi bi-image-fill me-1"></i> Imagen
+                {% endif %}
+              </span>
+            </div>
+
+            <div class="card bg-light mb-3">
+              <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Nombre de archivo</h6>
+                <p class="card-text fw-bold">{{ filename }}</p>
+              </div>
+            </div>
+
+            <div class="d-grid gap-2">
+              <a href="{{ media_url }}" target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+                <i class="bi bi-download me-2"></i> Descargar {{ filename }}
+              </a>
+            </div>
+
+            <div class="mt-3">
+              <small class="text-muted">
+                <i class="bi bi-info-circle me-1"></i>
+                El enlace abre el medio directamente desde los servidores de Instagram.
+                Haz clic derecho y selecciona "Guardar como..." para descargarlo.
+              </small>
+            </div>
+          {% else %}
+            <div class="alert alert-warning">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              No se pudo obtener la información del medio. Intenta con otra URL.
+            </div>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

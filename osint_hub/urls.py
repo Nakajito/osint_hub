@@ -13,6 +13,7 @@ urlpatterns = [
     path("ip/", include("IPLookup.urls")),
     path("user/", include("UsernameSearch.urls")),
     path("hash/", include("HashTool.urls")),
+    path("instagram/", include("InstagramSniffer.urls")),
     # Rutas SEO y Seguridad
     path(
         "robots.txt",

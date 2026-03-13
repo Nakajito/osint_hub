@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}Instagram Sniffer - Descargar Media{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="card shadow-sm">
+        <div class="card-body position-relative">
+
+          <h3 class="card-title">Instagram Sniffer</h3>
+          <p class="text-muted">Obtén la URL directa de medios de publicaciones de Instagram.</p>
+
+          <div class="mb-3">
+            <ul class="nav nav-pills">
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'instasniffer:search' %}">
+                  <i class="bi bi-person-badge me-1"></i> Buscar Usuario
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="{% url 'instasniffer:media' %}">
+                  <i class="bi bi-download me-1"></i> Descargar Media
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Loader overlay -->
+          <div id="search-loader" class="d-none">
+            <div class="text-center">
+              <div class="spinner-border" role="status"><span class="visually-hidden">Cargando...</span></div>
+              <div class="mt-2 loader-label">Buscando...</div>
+            </div>
+          </div>
+
+          <form method="post" id="insta-media-form">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="mb-3">
+              {{ form.post_url.label_tag }}
+              {{ form.post_url }}
+              <div class="form-text">
+                Ejemplo: https://www.instagram.com/usuario/p/ABC123/ o .../reel/ABC123/
+              </div>
+              {% for err in form.post_url.errors %}
+                <div class="invalid-feedback d-block">{{ err }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="d-grid gap-2">
+              <button class="btn btn-primary" type="submit">
+                <i class="bi bi-search"></i> Buscar Media
+              </button>
+              <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Volver al Inicio
+              </a>
+            </div>
+
+            <div class="row mt-4">
+              <div class="col-md-6 mb-3">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <h6 class="card-title">
+                      <i class="bi bi-info-circle text-info"></i> ¿Cómo funciona?
+                    </h6>
+                    <p class="card-text small text-muted">
+                      Ingresa la URL de una publicación de Instagram (post o reel) para
+                      obtener el enlace directo al medio (imagen o video) para su descarga.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <h6 class="card-title">
+                      <i class="bi bi-link-45deg text-primary"></i> Formatos soportados
+                    </h6>
+                    <p class="card-text small text-muted">
+                      Soporta publicaciones de tipo post (<code>/p/</code>) y
+                      reels (<code>/reel/</code>) de cuentas públicas o colaborativas.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  {% include "includes/disclaimer.html" %}
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    const form = document.getElementById('insta-media-form');
+    const loader = document.getElementById('search-loader');
+    if (!form) return;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    form.addEventListener('submit', function(){
+      if (loader) loader.classList.remove('d-none');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Buscando...';
+      }
+    });
+  });
+</script>
+{% endblock %}

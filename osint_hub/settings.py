@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "UsernameSearch",
     "HashTool",
     "IPLookup",
+    "InstagramSniffer",
 ]
 
 MIDDLEWARE = [

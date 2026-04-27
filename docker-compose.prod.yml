@@ -1,0 +1,36 @@
+# Coolify deployment — Traefik manages TLS and routing
+services:
+  web:
+    build: .
+    env_file: .env.prod
+    environment:
+      - DJANGO_SETTINGS_MODULE=osint_hub.settings
+    restart: always
+    networks:
+      - coolify
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --requirepass ${REDIS_PASSWORD} --save 60 1 --loglevel warning
+    restart: always
+    networks:
+      - coolify
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - coolify
+
+networks:
+  coolify:
+    external: true
+
+volumes:
+  postgres_data:

@@ -402,5 +402,11 @@ sessions/
 # search user folder
 search_results/
 
+# IA
+.claude/
+CLAUDE.md
+
+# Git worktrees
+.worktrees/
 
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode,linux,django,windows,macos,venv,git

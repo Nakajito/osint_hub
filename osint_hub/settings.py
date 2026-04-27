@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "HashTool",
     "IPLookup",
     "InstagramSniffer",
+    "django_celery_results",
 ]
 
 MIDDLEWARE = [
@@ -135,8 +136,8 @@ SEARCH_RESULTS_DIR = config(
 )
 
 # Configuración de seguridad para producción
-SESSION_COOKIE_SECURE = not DEBUG
-CSRF_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = False   # Traefik/Coolify handles TLS externally
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True

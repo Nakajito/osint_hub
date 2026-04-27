@@ -45,7 +45,6 @@ def search_email(request):
             # Guardar email en sesión para la página de resultados
             request.session["searched_email"] = email
             request.session["holehe_output"] = result.stdout
-            request.session["holehe_stderr"] = result.stderr
 
             messages.success(request, f"Búsqueda completada para {email}")
             return redirect("email_holehe:results")

@@ -135,8 +135,8 @@ SEARCH_RESULTS_DIR = config(
 )
 
 # Configuración de seguridad para producción
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
 SECURE_SSL_REDIRECT = False   # Traefik/Coolify handles TLS externally
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -146,7 +146,7 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
 # Configuración de CSRF_TRUSTED_ORIGINS desde variable de entorno
-csrf_trusted_origins_str = os.getenv("CSRF_TRUSTED_ORIGINS", "")
+csrf_trusted_origins_str = config("CSRF_TRUSTED_ORIGINS", default="")
 if csrf_trusted_origins_str:
     CSRF_TRUSTED_ORIGINS = [url.strip() for url in csrf_trusted_origins_str.split(",")]
 else:

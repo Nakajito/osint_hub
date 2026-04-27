@@ -102,6 +102,7 @@ def upload_file(request):
         try:
             tmp_dir = tempfile.mkdtemp(prefix="exif_")
             safe_name = re.sub(r"[^\w\.\-]", "_", os.path.basename(uploaded.name))
+            safe_name = safe_name[:200]
             if not safe_name or safe_name.startswith("."):
                 safe_name = "upload"
             tmp_path = os.path.join(tmp_dir, safe_name)
@@ -196,7 +197,7 @@ def upload_file(request):
         # Guardar en sesión
         clean_meta = clean_metadata_for_session(metadata)
         request.session["exif_metadata"] = clean_meta
-        request.session["exif_filename"] = uploaded.name
+        request.session["exif_filename"] = safe_name
         request.session["exif_drone_coords"] = drone_coords
         request.session["exif_target_coords"] = target_coords
         request.session["exif_map_drone_url"] = map_url_drone

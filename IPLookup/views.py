@@ -13,7 +13,13 @@ logger = logging.getLogger(__name__)
 def _is_safe_ip(ip: str) -> bool:
     try:
         addr = ipaddress.ip_address(ip)
-        return not (addr.is_private or addr.is_loopback or addr.is_link_local or addr.is_reserved)
+        return not (
+            addr.is_private
+            or addr.is_loopback
+            or addr.is_link_local
+            or addr.is_reserved
+            or addr.is_multicast
+        )
     except ValueError:
         return False
 

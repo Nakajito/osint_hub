@@ -1,15 +1,13 @@
+import os
+os.environ.setdefault("SECRET_KEY", "test-only-insecure-key-not-for-production")
+
 import pytest
-from django.test import RequestFactory, Client
+from django.test import RequestFactory
 
 
 @pytest.fixture
 def rf():
     return RequestFactory()
-
-
-@pytest.fixture
-def client():
-    return Client()
 
 
 @pytest.fixture

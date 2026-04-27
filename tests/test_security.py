@@ -1,20 +1,15 @@
 import pytest
-from django.test import override_settings
 from django.conf import settings
 
 
-@pytest.mark.django_db
 def test_production_session_cookie_is_secure():
-    """SESSION_COOKIE_SECURE must be True in production."""
-    with override_settings(DEBUG=False):
-        assert settings.SESSION_COOKIE_SECURE is True
+    """SESSION_COOKIE_SECURE must be True unconditionally."""
+    assert settings.SESSION_COOKIE_SECURE is True
 
 
-@pytest.mark.django_db
 def test_production_csrf_cookie_is_secure():
-    """CSRF_COOKIE_SECURE must be True in production."""
-    with override_settings(DEBUG=False):
-        assert settings.CSRF_COOKIE_SECURE is True
+    """CSRF_COOKIE_SECURE must be True unconditionally."""
+    assert settings.CSRF_COOKIE_SECURE is True
 
 
 @pytest.mark.django_db
@@ -25,17 +20,22 @@ def test_redis_url_not_hardcoded(settings):
 
 @pytest.mark.django_db
 def test_upload_sanitizes_path_traversal(client, tmp_path):
-    """Path traversal filenames must not write outside tmp dir."""
-    img = tmp_path / "safe.jpg"
-    img.write_bytes(b'\xff\xd8\xff\xe0' + b'\x00' * 100)
-    with open(img, "rb") as f:
-        resp = client.post(
-            "/exiftool/upload/",
-            {"file": f},
-            format="multipart",
-        )
-    # The response must redirect (not 500) and not write files outside tmp
+    """Path traversal filenames must not write files outside tmp dir."""
+    import os
+    import io
+    # Create a file with a traversal attack filename
+    content = b'\xff\xd8\xff\xe0' + b'\x00' * 100
+    traversal_file = io.BytesIO(content)
+    traversal_file.name = "../../etc/passwd.jpg"
+
+    resp = client.post(
+        "/exiftool/upload/",
+        {"file": traversal_file},
+    )
+    # Must not crash (500)
     assert resp.status_code in (200, 302)
+    # Most importantly: /etc/passwd.jpg must not exist (file not written to root)
+    assert not os.path.exists("/etc/passwd.jpg")
 
 
 @pytest.mark.django_db

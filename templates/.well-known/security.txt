@@ -1,4 +1,4 @@
-Contact: mailto:security@dabg.dev
+Contact: mailto:contacto@dabg.dev
 Preferred-Languages: es, en
 Canonical: https://dabg.dev/.well-known/security.txt
 # Política:

@@ -1,4 +1,5 @@
 import logging
+import ipaddress
 import httpx
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -7,6 +8,14 @@ from django.contrib import messages
 from .forms import IPLookupForm
 
 logger = logging.getLogger(__name__)
+
+
+def _is_safe_ip(ip: str) -> bool:
+    try:
+        addr = ipaddress.ip_address(ip)
+        return not (addr.is_private or addr.is_loopback or addr.is_link_local or addr.is_reserved)
+    except ValueError:
+        return False
 
 
 def _build_api_url(ip: str) -> str:
@@ -25,6 +34,9 @@ def ip_search(request):
         form = IPLookupForm(request.POST)
         if form.is_valid():
             ip = form.cleaned_data["ip"]
+            if not _is_safe_ip(ip):
+                messages.error(request, "Dirección IP no permitida.")
+                return render(request, "iplookup/search.html", {"form": form})
             api_url = _build_api_url(ip)
 
             try:

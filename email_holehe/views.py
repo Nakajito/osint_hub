@@ -5,6 +5,9 @@ import json
 import re
 import sys
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def search_email(request):
@@ -42,7 +45,6 @@ def search_email(request):
             # Guardar email en sesión para la página de resultados
             request.session["searched_email"] = email
             request.session["holehe_output"] = result.stdout
-            request.session["holehe_stderr"] = result.stderr
 
             messages.success(request, f"Búsqueda completada para {email}")
             return redirect("email_holehe:results")
@@ -58,7 +60,8 @@ def search_email(request):
             )
             return render(request, "email_holehe/search.html")
         except Exception as e:
-            messages.error(request, f"Error al realizar la búsqueda: {str(e)}")
+            logger.error("Error holehe: %s", e)
+            messages.error(request, "Error interno al realizar la búsqueda. Intenta nuevamente.")
             return render(request, "email_holehe/search.html")
 
     return render(request, "email_holehe/search.html")

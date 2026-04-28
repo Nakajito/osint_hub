@@ -81,3 +81,9 @@ whitenoise==6.8.2
 wrapt==2.0.1
 django-csp==3.8
 curl_cffi
+pytest==8.3.5
+pytest-django==4.9.0
+pytest-cov==6.1.0
+responses==0.25.7  # for mocking requests-based HTTP calls
+pytest-httpx==0.35.0  # for mocking httpx-based HTTP calls
+werkzeug==3.1.3

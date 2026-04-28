@@ -24,20 +24,6 @@ MAX_FILE_SIZE = 50 * 1024 * 1024
 logger = logging.getLogger(__name__)
 
 
-def clean_metadata_for_session(metadata):
-    """Limpiar metadatos para la sesión."""
-    clean_data = {}
-    if not isinstance(metadata, dict):
-        return {}
-    for k, v in metadata.items():
-        str_val = str(v)
-        if len(str_val) > 500:
-            clean_data[k] = str_val[:100] + "... (truncado)"
-        else:
-            clean_data[k] = v
-    return clean_data
-
-
 def parse_dms(dms_str):
     """
     Convierte cadenas DMS (ej: "21 deg 8' 34.30" N") a decimal (float).
@@ -115,7 +101,11 @@ def upload_file(request):
         # Guardar temporalmente
         try:
             tmp_dir = tempfile.mkdtemp(prefix="exif_")
-            tmp_path = os.path.join(tmp_dir, uploaded.name)
+            safe_name = re.sub(r"[^\w\.\-]", "_", os.path.basename(uploaded.name))
+            safe_name = safe_name[:200]
+            if not safe_name or safe_name.startswith("."):
+                safe_name = "upload"
+            tmp_path = os.path.join(tmp_dir, safe_name)
             with open(tmp_path, "wb+") as f:
                 for chunk in uploaded.chunks():
                     f.write(chunk)
@@ -207,7 +197,7 @@ def upload_file(request):
         # Guardar en sesión
         clean_meta = clean_metadata_for_session(metadata)
         request.session["exif_metadata"] = clean_meta
-        request.session["exif_filename"] = uploaded.name
+        request.session["exif_filename"] = safe_name
         request.session["exif_drone_coords"] = drone_coords
         request.session["exif_target_coords"] = target_coords
         request.session["exif_map_drone_url"] = map_url_drone

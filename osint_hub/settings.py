@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config(
     "SECRET_KEY",
 )
-DEBUG = config("DEBUG", default=True, cast=bool)
+DEBUG = config("DEBUG", default=False, cast=bool)
 
 # ALLOWED_HOSTS configurado desde variable de entorno
 ALLOWED_HOSTS = config(
@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "HashTool",
     "IPLookup",
     "InstagramSniffer",
+    "django_celery_results",
 ]
 
 MIDDLEWARE = [
@@ -73,12 +74,8 @@ WSGI_APPLICATION = "osint_hub.wsgi.application"
 
 # settings.py
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
+db_url = config("DATABASE_URL", default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}")
+DATABASES = {"default": dj_database_url.parse(db_url)}
 
 
 # Password validation
@@ -133,25 +130,24 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Directory to persist username search results (outside project root by default).
 # Can be overridden with an environment-specific absolute path via
 # the SEARCH_RESULTS_DIR setting or env var when deploying.
-SEARCH_RESULTS_DIR = os.environ.get(
+SEARCH_RESULTS_DIR = config(
     "SEARCH_RESULTS_DIR",
-    os.path.expanduser("~/.local/share/osint_hub/search_results"),
+    default=str(BASE_DIR / "data" / "search_results"),
 )
 
 # Configuración de seguridad para producción
-if not DEBUG:
-    SECURE_SSL_REDIRECT = False
-    SESSION_COOKIE_SECURE = False
-    CSRF_COOKIE_SECURE = False
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    X_FRAME_OPTIONS = "DENY"
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = False   # Traefik/Coolify handles TLS externally
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = "DENY"
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
 
 # Configuración de CSRF_TRUSTED_ORIGINS desde variable de entorno
-csrf_trusted_origins_str = os.getenv("CSRF_TRUSTED_ORIGINS", "")
+csrf_trusted_origins_str = config("CSRF_TRUSTED_ORIGINS", default="")
 if csrf_trusted_origins_str:
     CSRF_TRUSTED_ORIGINS = [url.strip() for url in csrf_trusted_origins_str.split(",")]
 else:
@@ -170,8 +166,9 @@ if not os.path.exists(EXIFTOOL_PATH):
 
 
 # Celery Configuration
-CELERY_BROKER_URL = "redis://localhost:6379/0"
-CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+REDIS_URL = config("REDIS_URL", default="redis://redis:6379/0")
+CELERY_BROKER_URL = REDIS_URL
+CELERY_RESULT_BACKEND = REDIS_URL
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"

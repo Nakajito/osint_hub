@@ -19,9 +19,8 @@ DETECTOR_CHOICES: list[tuple[str, str]] = [
 
 
 class FaceVerifyForm(forms.Form):
-    # Use FileField to avoid requiring Pillow (PIL); content-type validated manually.
-    image1 = forms.FileField(label="Imagen 1")
-    image2 = forms.FileField(label="Imagen 2")
+    image1 = forms.ImageField(label="Imagen 1")
+    image2 = forms.ImageField(label="Imagen 2")
     detector = forms.ChoiceField(choices=DETECTOR_CHOICES, initial="mtcnn")
 
     def _validate_image(self, f: UploadedFile) -> UploadedFile:

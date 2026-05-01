@@ -1,5 +1,6 @@
 """Tests for FaceVerify app — written first (TDD)."""
 
+import io
 import os
 import sys
 import tempfile
@@ -8,20 +9,36 @@ from unittest.mock import MagicMock, patch
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client
+from PIL import Image
 
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
-TINY_JPEG = b"\xff\xd8\xff\xe0" + b"\x00" * 100  # Minimal fake JPEG bytes
+
+def _png_bytes() -> bytes:
+    """Return bytes of a valid 1×1 px PNG (Pillow-verifiable)."""
+    buf = io.BytesIO()
+    Image.new("RGB", (1, 1), color=(255, 0, 0)).save(buf, format="PNG")
+    return buf.getvalue()
 
 
 def _make_upload(
-    name: str = "photo.jpg", content_type: str = "image/jpeg", size: int = 100
+    name: str = "photo.png",
+    content_type: str = "image/png",
+    fake_size: int | None = None,
 ) -> SimpleUploadedFile:
-    content = b"\x00" * size
-    return SimpleUploadedFile(name, content, content_type=content_type)
+    """Create an upload with valid PNG content. Override `size` if fake_size given."""
+    f = SimpleUploadedFile(name, _png_bytes(), content_type=content_type)
+    if fake_size is not None:
+        f.size = fake_size
+    return f
+
+
+def _make_bad_upload(name: str = "evil.exe", content_type: str = "application/octet-stream") -> SimpleUploadedFile:
+    """Non-image upload (PIL will reject it)."""
+    return SimpleUploadedFile(name, b"\x00" * 100, content_type=content_type)
 
 
 # ---------------------------------------------------------------------------
@@ -32,24 +49,23 @@ def _make_upload(
 @pytest.mark.django_db
 class TestFaceVerifyForm:
     def test_form_rejects_oversize_file(self):
-        """File > 10 MB should make form invalid with '10 MB' in error message."""
+        """File > 10 MB (faked size on valid PNG) should make form invalid with '10 MB'."""
         from FaceVerify.forms import FaceVerifyForm, MAX_FILE_SIZE
 
-        big = _make_upload(size=MAX_FILE_SIZE + 1)
+        big = _make_upload(fake_size=MAX_FILE_SIZE + 1)
         normal = _make_upload()
         form = FaceVerifyForm(
             data={"detector": "mtcnn"},
             files={"image1": big, "image2": normal},
         )
         assert not form.is_valid()
-        errors_str = str(form.errors)
-        assert "10 MB" in errors_str
+        assert "10 MB" in str(form.errors)
 
     def test_form_rejects_bad_content_type(self):
-        """Non-image content type should make form invalid."""
+        """Non-image file (PIL-rejected) should make form invalid."""
         from FaceVerify.forms import FaceVerifyForm
 
-        bad = _make_upload(name="evil.exe", content_type="application/octet-stream")
+        bad = _make_bad_upload()
         normal = _make_upload()
         form = FaceVerifyForm(
             data={"detector": "mtcnn"},
@@ -58,13 +74,18 @@ class TestFaceVerifyForm:
         assert not form.is_valid()
 
     def test_form_accepts_webp_png_jpg(self):
-        """Valid JPEG, PNG and WebP uploads should all be accepted."""
+        """Valid PNG content passed with jpeg/webp/png MIME types should be accepted.
+
+        ImageField validates by reading actual file bytes (PIL), not MIME header.
+        Our _validate_image checks content_type against ALLOWED_CONTENT_TYPES,
+        so we confirm each type is in the allowlist.
+        """
         from FaceVerify.forms import FaceVerifyForm
 
         for ct, ext in [
             ("image/jpeg", "a.jpg"),
-            ("image/png", "a.png"),
             ("image/webp", "a.webp"),
+            ("image/png", "a.png"),
         ]:
             img1 = _make_upload(name=ext, content_type=ct)
             img2 = _make_upload(name=ext, content_type=ct)
@@ -72,9 +93,7 @@ class TestFaceVerifyForm:
                 data={"detector": "mtcnn"},
                 files={"image1": img1, "image2": img2},
             )
-            assert form.is_valid(), (
-                f"Expected valid for {ct}, got errors: {form.errors}"
-            )
+            assert form.is_valid(), f"Expected valid for {ct}, got: {form.errors}"
 
 
 # ---------------------------------------------------------------------------
@@ -105,8 +124,8 @@ class TestIndexView:
         mock_result = MagicMock()
         mock_result.id = "fake-task-id-123"
 
-        img1 = _make_upload()
-        img2 = _make_upload()
+        img1 = _make_upload(name="face1.png", content_type="image/png")
+        img2 = _make_upload(name="face2.png", content_type="image/png")
 
         with patch("FaceVerify.views.verify_faces_task") as mock_task:
             mock_task.delay.return_value = mock_result

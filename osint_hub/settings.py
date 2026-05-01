@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "HashTool",
     "IPLookup",
     "InstagramSniffer",
+    "FaceVerify",
     "django_celery_results",
 ]
 

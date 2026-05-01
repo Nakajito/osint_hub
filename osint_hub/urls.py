@@ -14,6 +14,7 @@ urlpatterns = [
     path("user/", include("UsernameSearch.urls")),
     path("hash/", include("HashTool.urls")),
     path("instagram/", include("InstagramSniffer.urls")),
+    path("face/", include("FaceVerify.urls")),
     # Rutas SEO y Seguridad
     path(
         "robots.txt",

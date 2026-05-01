@@ -6,7 +6,7 @@ import tempfile
 
 from celery.result import AsyncResult
 from django.core.files.uploadedfile import UploadedFile
-from django.http import HttpRequest, JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render
 
 from .forms import FaceVerifyForm
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 def _safe_save(uploaded: UploadedFile, tmp_dir: str, prefix: str) -> str:
-    safe = re.sub(r"[^\w\.\-]", "_", os.path.basename(uploaded.name))[:200] or "img"
+    safe = re.sub(r"[^\w\.\-]", "_", os.path.basename(uploaded.name or "img"))[:200] or "img"
     path = os.path.join(tmp_dir, f"{prefix}_{safe}")
     with open(path, "wb+") as f:
         for chunk in uploaded.chunks():
@@ -24,7 +24,7 @@ def _safe_save(uploaded: UploadedFile, tmp_dir: str, prefix: str) -> str:
     return path
 
 
-def index(request: HttpRequest) -> JsonResponse | object:
+def index(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = FaceVerifyForm(request.POST, request.FILES)
         if not form.is_valid():

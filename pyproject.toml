@@ -98,3 +98,10 @@ dependencies = [
     "whitenoise==6.8.2",
     "wrapt==2.0.1",
 ]
+
+[dependency-groups]
+dev = [
+    "django-stubs>=6.0.3",
+    "mypy>=1.19.1",
+    "ruff>=0.15.12",
+]

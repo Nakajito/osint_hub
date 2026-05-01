@@ -24,7 +24,7 @@ class FaceVerifyForm(forms.Form):
     detector = forms.ChoiceField(choices=DETECTOR_CHOICES, initial="mtcnn")
 
     def _validate_image(self, f: UploadedFile) -> UploadedFile:
-        if f.size > MAX_FILE_SIZE:
+        if (f.size or 0) > MAX_FILE_SIZE:
             raise forms.ValidationError("Máx 10 MB.")
         if f.content_type not in ALLOWED_CONTENT_TYPES:
             raise forms.ValidationError("Formato no permitido.")

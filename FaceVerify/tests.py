@@ -36,7 +36,9 @@ def _make_upload(
     return f
 
 
-def _make_bad_upload(name: str = "evil.exe", content_type: str = "application/octet-stream") -> SimpleUploadedFile:
+def _make_bad_upload(
+    name: str = "evil.exe", content_type: str = "application/octet-stream"
+) -> SimpleUploadedFile:
     """Non-image upload (PIL will reject it)."""
     return SimpleUploadedFile(name, b"\x00" * 100, content_type=content_type)
 

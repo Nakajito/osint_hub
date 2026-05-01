@@ -1,97 +1,261 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Verificación Facial - FaceVerify{% endblock %}
+{% block title %}FaceVerify{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/FaceVerify/verify.css' %}?v=3">
+{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <div class="row justify-content-center">
-    <div class="col-md-9">
+<div class="container-lg mt-4 mb-5">
 
-      <!-- Header -->
-      <div class="mb-4">
-        <h2><i class="bi bi-person-bounding-box me-2"></i>Verificación Facial</h2>
-        <p class="text-muted">Compara dos imágenes usando ArcFace para determinar si pertenecen a la misma persona.</p>
-      </div>
+  <!-- Title -->
+  <div class="text-center mb-5">
+    <div class="fw-black text-uppercase"
+         style="font-family:'Manrope',sans-serif; font-size:2.1rem; font-weight:900; color:#FF6500; letter-spacing:-.01em; line-height:1;">
+      FaceVerify
+    </div>
+    <p class="hud-label mt-2 mb-0">Sistema biométrico de comparación facial</p>
+  </div>
 
-      <!-- Form card -->
-      <div class="card shadow-sm">
-        <div class="card-body">
-          <form method="post" enctype="multipart/form-data" id="face-verify-form" novalidate>
-            {% csrf_token %}
+  <form method="post" enctype="multipart/form-data" id="face-verify-form" novalidate>
+    {% csrf_token %}
+    <input type="file" name="image1" id="image1" accept="image/*" class="d-none">
+    <input type="file" name="image2" id="image2" accept="image/*" class="d-none">
 
-            <!-- Detector selector -->
-            <div class="mb-3">
-              <label for="detector" class="form-label fw-semibold">Detector facial</label>
-              <select name="detector" id="detector" class="form-select">
-                <option value="mtcnn" selected>MTCNN (preciso)</option>
-                <option value="opencv">OpenCV (rápido)</option>
-              </select>
-            </div>
+    <!-- Panels -->
+    <div class="row g-4 mb-4">
 
-            <!-- Image inputs -->
-            <div class="row g-3 mb-3">
-              <div class="col-md-6">
-                <label for="image1" class="form-label fw-semibold">Imagen 1</label>
-                <input type="file" name="image1" id="image1" accept="image/*" class="form-control">
-                <img id="preview1" class="img-thumbnail mt-2 w-100" style="max-height:200px; object-fit:contain; display:none;" alt="Vista previa 1">
+      <!-- Source Identity -->
+      <div class="col-md-6">
+        <div class="glass-panel p-4 h-100 d-flex flex-column">
+
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="fw-bold mb-0 d-flex align-items-center gap-2"
+                style="font-size:.95rem; color:#e2e2e2; font-family:'Manrope',sans-serif; text-transform:uppercase; letter-spacing:.06em;">
+              <i class="bi bi-shield-check" style="color:#FF6500;"></i>Identidad de la fuente
+            </h3>
+            <span class="panel-tag">Archivo de referencia</span>
+          </div>
+
+          <div class="ratio ratio-1x1 mb-3">
+            <div class="dz-image-area" id="drop-zone-1">
+
+              <div class="dz-empty" id="dz-empty-1">
+                <i class="bi bi-cloud-arrow-up dz-icon"></i>
+                <p class="dz-empty-title mb-1">Soltar imagen original</p>
+                <p class="text-muted small mb-3">Compatible con los formatos JPEG, PNG o RAW</p>
+                <label for="image1" class="btn btn-sm btn-outline-light rounded-pill px-3"
+                       style="cursor:pointer; letter-spacing:.08em; font-weight:700; font-size:.72rem;">
+                  Explorar archivos
+                </label>
               </div>
-              <div class="col-md-6">
-                <label for="image2" class="form-label fw-semibold">Imagen 2</label>
-                <input type="file" name="image2" id="image2" accept="image/*" class="form-control">
-                <img id="preview2" class="img-thumbnail mt-2 w-100" style="max-height:200px; object-fit:contain; display:none;" alt="Vista previa 2">
+
+              <div class="dz-preview d-none" id="dz-preview-1">
+                <div class="dz-canvas-wrap">
+                  <img id="preview1" class="dz-img" alt="">
+                  <canvas id="canvas1" class="dz-canvas-overlay"></canvas>
+                  <div class="scanning-bar"></div>
+                  <div class="face-anchor" style="top:35%;left:42%;"></div>
+                  <div class="face-anchor" style="top:35%;left:58%;animation-delay:.4s;"></div>
+                  <div class="face-anchor" style="top:52%;left:50%;animation-delay:.8s;"></div>
+                  <div class="face-anchor" style="top:65%;left:40%;animation-delay:.2s;"></div>
+                  <div class="face-anchor" style="top:65%;left:60%;animation-delay:.6s;"></div>
+                </div>
+                <div class="dz-file-info">
+                  <span id="file-name-1" class="hud-value"
+                        style="font-size:.62rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:65%;"></span>
+                  <span id="face-status1" class="badge d-none" style="font-size:.58rem;"></span>
+                </div>
+                <button type="button" class="dz-clear" id="clear1" title="Remove image">
+                  <i class="bi bi-x-lg"></i>
+                </button>
               </div>
+
             </div>
-            <div class="form-text mb-3">Formatos: JPG, PNG, WEBP, BMP, TIFF, GIF. Máx 10 MB por imagen.</div>
+          </div>
 
-            <div class="d-flex justify-content-between">
-              <a href="{% url 'home' %}" class="btn btn-outline-secondary">Volver al inicio</a>
-              <button type="submit" id="submit-btn" class="btn btn-primary">
-                <i class="bi bi-person-check me-1"></i>Comparar rostros
-              </button>
+          <label for="image1" class="btn-replace mt-auto">
+            <i class="bi bi-arrow-repeat me-1"></i>Sustituir referencia
+          </label>
+        </div>
+      </div>
+
+      <!-- Target Subject -->
+      <div class="col-md-6">
+        <div class="glass-panel p-4 h-100 d-flex flex-column">
+
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="fw-bold mb-0 d-flex align-items-center gap-2"
+                style="font-size:.95rem; color:#e2e2e2; font-family:'Manrope',sans-serif; text-transform:uppercase; letter-spacing:.06em;">
+              <i class="bi bi-crosshair" style="color:#FF6500;"></i>Identidad de objetivo
+            </h3>
+            <span class="panel-tag alt">Fuente de destino</span>
+          </div>
+
+          <div class="ratio ratio-1x1 mb-3">
+            <div class="dz-image-area" id="drop-zone-2">
+
+              <div class="dz-empty" id="dz-empty-2">
+                <i class="bi bi-person-bounding-box dz-icon"></i>
+                <p class="dz-empty-title mb-1">Soltar imagen de objetivo</p>
+                <p class="text-muted small mb-3">Tamaño máximo de archivo: 10MB</p>
+                <label for="image2" class="btn btn-sm btn-outline-light rounded-pill px-3"
+                       style="cursor:pointer; letter-spacing:.08em; font-weight:700; font-size:.72rem;">
+                  Explorar archivos
+                </label>
+              </div>
+
+              <div class="dz-preview d-none" id="dz-preview-2">
+                <div class="dz-canvas-wrap">
+                  <img id="preview2" class="dz-img" alt="">
+                  <canvas id="canvas2" class="dz-canvas-overlay"></canvas>
+                  <div class="scanning-bar" style="animation-delay:.5s;"></div>
+                  <div class="face-anchor" style="top:36%;left:43%;"></div>
+                  <div class="face-anchor" style="top:36%;left:57%;animation-delay:.4s;"></div>
+                  <div class="face-anchor" style="top:51%;left:51%;animation-delay:.8s;"></div>
+                  <div class="face-anchor" style="top:64%;left:41%;animation-delay:.2s;"></div>
+                  <div class="face-anchor" style="top:64%;left:59%;animation-delay:.6s;"></div>
+                </div>
+                <div class="dz-file-info">
+                  <span id="file-name-2" class="hud-value"
+                        style="font-size:.62rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:65%;"></span>
+                  <span id="face-status2" class="badge d-none" style="font-size:.58rem;"></span>
+                </div>
+                <button type="button" class="dz-clear" id="clear2" title="Remove image">
+                  <i class="bi bi-x-lg"></i>
+                </button>
+              </div>
+
             </div>
-          </form>
+          </div>
+
+          <label for="image2" class="btn-replace mt-auto">
+            <i class="bi bi-camera me-1"></i>Capturar nueva muestra
+          </label>
         </div>
       </div>
+    </div>
 
-      <!-- Loader -->
-      <div id="search-loader" class="card shadow-sm mt-3" style="display:none;">
-        <div class="card-body d-flex align-items-center justify-content-center p-4">
-          <div class="spinner-border me-3" role="status" aria-hidden="true"></div>
-          <span class="loader-label">Analizando rostros... esto puede tardar unos segundos</span>
-        </div>
-      </div>
+    <!-- Detector selector -->
+    <div class="d-flex justify-content-center align-items-center gap-2 mb-4">
+      <span class="hud-label">Protocolo del Detector Facial:</span>
+      <select name="detector" id="detector" class="form-select form-select-sm w-auto"
+              style="font-size:.75rem; background:rgba(30,62,98,.3); border-color:rgba(42,84,128,.4); color:inherit;">
+        <option value="mtcnn">MTCNN — Preciso</option>
+        <option value="opencv">OpenCV — Rápido</option>
+      </select>
+    </div>
 
-      <!-- Result section -->
-      <div id="result-section" class="card shadow-sm mt-3" style="display:none;">
-        <div class="card-body">
-          <h5 class="card-title"><i class="bi bi-clipboard-data me-2"></i>Resultado</h5>
-          <div id="result-verdict" class="alert" role="alert"></div>
-          <ul class="list-group list-group-flush mt-2">
-            <li class="list-group-item d-flex justify-content-between"><span><strong>Distancia:</strong></span> <span id="r-distance"></span></li>
-            <li class="list-group-item d-flex justify-content-between"><span><strong>Umbral:</strong></span> <span id="r-threshold"></span></li>
-            <li class="list-group-item d-flex justify-content-between"><span><strong>Confianza:</strong></span> <span id="r-confidence"></span>%</li>
-            <li class="list-group-item d-flex justify-content-between"><span><strong>Modelo:</strong></span> <span id="r-model"></span></li>
-            <li class="list-group-item d-flex justify-content-between"><span><strong>Detector:</strong></span> <span id="r-detector"></span></li>
-          </ul>
-          <button class="btn btn-outline-secondary mt-3" id="reset-btn">
-            <i class="bi bi-arrow-counterclockwise me-1"></i>Nueva comparación
-          </button>
-        </div>
-      </div>
+    <!-- Run button -->
+    <div class="text-center mb-4">
+      <button type="submit" id="submit-btn" class="btn-run">
+        <i class="bi bi-cpu"></i>Realizar análisis comparativo
+      </button>
+    </div>
+  </form>
 
-      <!-- Error section -->
-      <div id="error-section" class="alert alert-danger mt-3" style="display:none;" role="alert">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-        <span id="error-message"></span>
-      </div>
-
-      {% include "includes/disclaimer.html" %}
+  <!-- Loader -->
+  <div id="search-loader" class="glass-panel p-4 mb-3 d-none">
+    <div class="d-flex align-items-center justify-content-center gap-3">
+      <div class="spinner-border" style="color:#FF6500;" role="status" aria-hidden="true"></div>
+      <span class="hud-label" style="font-size:.75rem; color:#aac9f4;">
+        Analizando datos biométricos... por favor espere
+      </span>
     </div>
   </div>
+
+  <!-- Result panel -->
+  <div id="result-section" class="glass-panel result-panel p-4 mb-3 d-none">
+    <div class="row align-items-center g-4">
+
+      <!-- Gauge -->
+      <div class="col-auto">
+        <div class="d-flex align-items-center gap-3">
+          <div class="gauge-wrap">
+            <svg class="gauge-svg" viewBox="0 0 96 96">
+              <circle cx="48" cy="48" r="40" fill="transparent"
+                stroke="rgba(42,84,128,.25)" stroke-width="8"/>
+              <circle id="gauge-fill" cx="48" cy="48" r="40" fill="transparent"
+                stroke="#FF6500" stroke-width="8"
+                stroke-dasharray="251" stroke-dashoffset="251"
+                stroke-linecap="round"
+                style="transition: stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1), stroke .3s;"/>
+            </svg>
+            <div class="gauge-label"><span id="gauge-value">0%</span></div>
+          </div>
+          <div>
+            <p class="hud-label mb-1">Puntaje de Similitud</p>
+            <span id="result-badge" class="badge px-2 py-1" style="font-size:.68rem; letter-spacing:.08em;"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data grid -->
+      <div class="col">
+        <div class="row g-3">
+          <div class="col-6">
+            <p class="hud-label mb-1">Distancia</p>
+            <div id="r-distance" class="hud-value"></div>
+          </div>
+          <div class="col-6">
+            <p class="hud-label mb-1">Umbral</p>
+            <div id="r-threshold" class="hud-value"></div>
+          </div>
+          <div class="col-6">
+            <p class="hud-label mb-1">Confianza</p>
+            <div class="hud-value"><span id="r-confidence"></span>%</div>
+          </div>
+          <div class="col-6">
+            <p class="hud-label mb-1">Nivel de Confianza</p>
+            <div id="confidence-level-val" class="hud-value fw-bold"></div>
+          </div>
+          <div class="col-6">
+            <p class="hud-label mb-1">Modelo</p>
+            <div id="r-model" class="hud-value"></div>
+          </div>
+          <div class="col-6">
+            <p class="hud-label mb-1">Backend del detector</p>
+            <div id="r-detector" class="hud-value"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="col-md-auto d-flex flex-column gap-2" style="min-width:160px;">
+        <button id="reset-btn" class="btn-hud">
+          <i class="bi bi-arrow-counterclockwise me-1"></i>Nueva Comparación
+        </button>
+        <a href="{% url 'home' %}" class="btn-hud accent">
+          <i class="bi bi-house me-1"></i>Volver a la página principal
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div id="error-section" class="alert alert-danger border-0 rounded mb-3 d-none" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    <span id="error-message"></span>
+  </div>
+
+  <!-- HUD footer -->
+  <div class="hud-footer">
+    <div class="d-flex gap-4 flex-wrap">
+      <span>Estado del sistema: <span class="ok">Operacional</span></span>
+      <span>Modelo: <span class="accent-col">ArcFace</span></span>
+      <span>Cifrado: <span class="ok">Activo</span></span>
+    </div>
+    <span><i class="bi bi-lock-fill me-1"></i>No se almacenan datos biométricos</span>
+  </div>
+
+  {% include "includes/disclaimer.html" %}
 </div>
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/FaceVerify/verify.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/dist/face-api.min.js"></script>
+<script src="{% static 'js/FaceVerify/verify.js' %}?v=3"></script>
 {% endblock %}

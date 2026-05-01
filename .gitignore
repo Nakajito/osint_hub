@@ -405,6 +405,9 @@ search_results/
 # IA
 .claude/
 CLAUDE.md
+plan.md
+tasks/faceverify_plan.md
+guide.html
 
 # Git worktrees
 .worktrees/

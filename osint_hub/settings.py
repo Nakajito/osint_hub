@@ -201,6 +201,7 @@ CSP_SCRIPT_SRC = (
 # 3. Estilos: Permitir local y CDNs
 CSP_STYLE_SRC = (
     "'self'",
+    "'unsafe-inline'",
     "https://cdn.jsdelivr.net",  # Bootstrap 5 CSS
     "https://fonts.googleapis.com",  # Si usas Google Fonts
 )
@@ -209,6 +210,7 @@ CSP_STYLE_SRC = (
 CSP_IMG_SRC = (
     "'self'",
     "data:",
+    "blob:",
     "https://*.openstreetmap.org",
     "https://*.tile.openstreetmap.org",
 )
@@ -226,7 +228,13 @@ CSP_FRAME_SRC = (
     "https://www.openstreetmap.org",
 )
 
-# 7. Configuración de Nonce (Número usado una vez)
+# 7. Conexiones fetch/XHR
+CSP_CONNECT_SRC = (
+    "'self'",
+    "https://cdn.jsdelivr.net",
+)
+
+# 8. Configuración de Nonce (Número usado una vez)
 # Esto permite ejecutar scripts inline específicos (<script nonce="...">)
 # sin permitir 'unsafe-inline' globalmente.
 CSP_INCLUDE_NONCE_IN = ["script-src"]

@@ -178,3 +178,29 @@
         </div>
     </div>
 </div>
+
+<!-- Tarjeta: Face Verify -->
+<div class="col-md-6 col-lg-4 mb-4">
+    <div class="card h-100 shadow-sm hover-card">
+        <div class="card-body text-center">
+            <div class="mb-3">
+                <i class="bi bi-person-bounding-box display-3 text-primary"></i>
+            </div>
+            <h5 class="card-title fw-bold">Verificación Facial</h5>
+            <p class="card-text text-muted">
+                Compara dos imágenes usando ArcFace para determinar si pertenecen
+                a la misma persona.
+            </p>
+            <div class="d-grid">
+                <a href="{% url 'faceverify:index' %}" class="btn btn-primary">
+                    <i class="bi bi-person-check"></i> Comparar rostros
+                </a>
+            </div>
+        </div>
+        <div class="card-footer bg-transparent border-top-0">
+            <small class="text-muted">
+                <i class="bi bi-check-circle-fill text-success"></i> Disponible
+            </small>
+        </div>
+    </div>
+</div>

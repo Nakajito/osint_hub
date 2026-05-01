@@ -61,7 +61,12 @@
       "Bash(git merge *)",
       "Bash(SECRET_KEY=test-only-insecure-key .worktrees/feature-docker-security-tdd/.venv/bin/python -m pytest tests/ -v)",
       "Bash(git branch *)",
-      "Bash(git -C .worktrees/feature-docker-security-tdd status --short)"
+      "Bash(git -C .worktrees/feature-docker-security-tdd status --short)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__query-docs"
+    ],
+    "additionalDirectories": [
+      "/home/nakajito/proyectos/osint_hub"
     ]
   }
 }

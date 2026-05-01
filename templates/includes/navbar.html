@@ -62,6 +62,12 @@
                         <i class="bi bi-instagram me-1"></i> Instagram
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if 'face' in request.path %}active fw-semibold text-primary{% endif %}"
+                       href="{% url 'faceverify:index' %}">
+                        <i class="bi bi-person-bounding-box me-1"></i> Rostros
+                    </a>
+                </li>
             </ul>
 
             {% comment %} <ul class="navbar-nav ms-auto align-items-center">

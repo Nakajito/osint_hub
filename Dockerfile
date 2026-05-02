@@ -1,21 +1,15 @@
-# Stage 1: Builder
+# Stage 1: Builder con uv
 FROM python:3.12-slim AS builder
-# Aprovechamos uv al máximo
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
 WORKDIR /build
 
+# Dependencias para compilar Pillow, Postgres y OpenCV
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    libpq-dev \
-    libjpeg-dev \
-    zlib1g-dev \
-    libpng-dev \
-    gcc
+    build-essential libpq-dev libjpeg-dev zlib1g-dev libpng-dev gcc
 
 COPY pyproject.toml uv.lock ./
-
-# Usamos uv para generar los wheels directamente, es más rápido y seguro
+# Generamos los wheels con uv para asegurar consistencia
 RUN uv export --format requirements-txt > requirements.txt
 RUN pip wheel --no-cache-dir --wheel-dir /build/wheels -r requirements.txt
 
@@ -23,7 +17,7 @@ RUN pip wheel --no-cache-dir --wheel-dir /build/wheels -r requirements.txt
 FROM python:3.12-slim AS runtime
 WORKDIR /app
 
-# Agregamos libgl1 y libglib2.0-0, esenciales para OpenCV/DeepFace
+# Librerías necesarias para Pillow, OpenCV y ExifTool
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libimage-exiftool-perl \
     libpq5 \
@@ -38,16 +32,11 @@ COPY --from=builder /build/wheels /wheels
 RUN pip install --no-cache /wheels/*
 
 RUN groupadd -r appuser && useradd -r -g appuser -d /app appuser
-
-# Creamos los directorios antes de copiar el código para asegurar permisos
-RUN mkdir -p /app/staticfiles /app/media /app/data/search_results /home/appuser/.deepface \
-    && chown -R appuser:appuser /app /home/appuser/.deepface
-
 COPY --chown=appuser:appuser . .
 
+# Asegurar directorios de static y media con permisos
+RUN mkdir -p /app/staticfiles /app/media /app/data/search_results \
+    && chown -R appuser:appuser /app
+
 USER appuser
-
-# Exponemos el puerto que usa Gunicorn según tus logs
-EXPOSE 8000
-
 ENTRYPOINT ["/app/entrypoint.sh"]

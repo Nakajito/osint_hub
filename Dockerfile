@@ -1,5 +1,5 @@
 # Stage 1: Builder con uv
-FROM python:3.12-slim AS builder
+FROM python:3.13-slim AS builder
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
 WORKDIR /build
@@ -14,7 +14,7 @@ RUN uv export --format requirements-txt > requirements.txt
 RUN pip wheel --no-cache-dir --wheel-dir /build/wheels -r requirements.txt
 
 # Stage 2: Runtime
-FROM python:3.12-slim AS runtime
+FROM python:3.13-slim AS runtime
 WORKDIR /app
 
 # Librerías necesarias para Pillow, OpenCV y ExifTool

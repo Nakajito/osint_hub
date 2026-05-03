@@ -34,9 +34,16 @@ RUN pip install --no-cache /wheels/*
 RUN groupadd -r appuser && useradd -r -g appuser -d /app appuser
 COPY --chown=appuser:appuser . .
 
-# Asegurar directorios de static y media con permisos
-RUN mkdir -p /app/staticfiles /app/media /app/data/search_results \
+# Asegurar directorios de static, media y cache de DeepFace con permisos
+RUN mkdir -p /app/staticfiles /app/media /app/data/search_results /app/.deepface/weights \
     && chown -R appuser:appuser /app
 
 USER appuser
+
+# Pre-descarga ArcFace y RetinaFace para evitar latencia en runtime
+ENV HOME=/app
+RUN python -c "from deepface.modules import modeling; modeling.build_model(task='facial_recognition', model_name='ArcFace')" \
+    && python -c "from deepface.modules import modeling; modeling.build_model(task='face_detector', model_name='retinaface')" \
+    || true
+
 ENTRYPOINT ["/app/entrypoint.sh"]

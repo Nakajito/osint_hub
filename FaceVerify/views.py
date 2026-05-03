@@ -2,9 +2,10 @@ import logging
 import os
 import re
 import shutil
-import tempfile
+import uuid
 
 from celery.result import AsyncResult
+from django.conf import settings
 from django.core.files.uploadedfile import UploadedFile
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render
@@ -30,7 +31,10 @@ def index(request: HttpRequest) -> HttpResponse:
         if not form.is_valid():
             return JsonResponse({"ok": False, "errors": form.errors}, status=400)
 
-        tmp_dir = tempfile.mkdtemp(prefix="faceverify_")
+        tmp_dir = os.path.join(
+            settings.MEDIA_ROOT, "tmp", f"faceverify_{uuid.uuid4().hex}"
+        )
+        os.makedirs(tmp_dir, exist_ok=True)
         try:
             p1 = _safe_save(form.cleaned_data["image1"], tmp_dir, "a")
             p2 = _safe_save(form.cleaned_data["image2"], tmp_dir, "b")

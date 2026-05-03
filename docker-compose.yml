@@ -7,7 +7,7 @@ services:
     volumes:
       - media_data:/app/media
       - search_data:/app/data/search_results
-      - deepface_weights:/home/appuser/.deepface
+      - deepface_weights:/app/.deepface
     depends_on:
       redis:
         condition: service_healthy
@@ -22,7 +22,7 @@ services:
     volumes:
       - media_data:/app/media
       - search_data:/app/data/search_results
-      - deepface_weights:/home/appuser/.deepface
+      - deepface_weights:/app/.deepface
     depends_on:
       redis:
         condition: service_healthy
